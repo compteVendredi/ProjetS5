@@ -22,16 +22,6 @@ public class FilDiscussion {
 		return this.messages;
 	}
 
-	private Groupe destination;
-
-	public void setDestination(Groupe value) {
-		this.destination = value;
-	}
-
-	public Groupe getDestination() {
-		return this.destination;
-	}
-
 	private Message ticket;
 
 	public Message getTicket() {
