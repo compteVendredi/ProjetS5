@@ -3,21 +3,16 @@ package utilisateur;
 import java.util.HashSet;
 import java.util.Set;
 
-import utilisateur.Message;
-
 public class FilDiscussion {
-	/**
-	 * <pre>
-	 *           1..1          0..*
-	 * FilDiscussion ------------------------> Message
-	 *           &lt;       messages
-	 * </pre>
-	 */
+	
 	private Set<Message> messages;
+	private int id_filDiscussion;
+	private int id_groupe;
 
-	public FilDiscussion(Message ticket) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
+	public FilDiscussion(Message ticket,int id_filDiscussion, int id_groupe) {
+		messages.add(ticket);
+		this.id_filDiscussion = id_filDiscussion;
+		this.id_groupe = id_groupe;
 	}	
 	
 	public Set<Message> getMessages() {
@@ -39,27 +34,15 @@ public class FilDiscussion {
 
 	private Message ticket;
 
-	public void setTicket(Message value) {
-		this.ticket = value;
-	}
-
 	public Message getTicket() {
 		return this.ticket;
 	}
-
-	public int ajotuerMessage(Message message) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
+	
+	public int getId_filDiscussion() {
+		return id_filDiscussion;
 	}
 
-	public int supprimerMessage(Message message) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
+	public int getId_groupe() {
+		return id_groupe;
 	}
-
-	public Message getMessage() {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
 }
