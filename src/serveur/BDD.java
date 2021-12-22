@@ -92,9 +92,10 @@ public class BDD {
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * Récupère tous les utilisateurs de la BDD
+	 * 
 	 * @return utilisateurs
 	 */
 	public Set<Utilisateur> getAllUtilisateurs() {
@@ -124,128 +125,182 @@ public class BDD {
 	public String getUrl() {
 		return url;
 	}
-	
+
 	public boolean existeUser(String id_utilisateur) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
-		if (resultSet==null) {
+		if (resultSet == null) {
 			return false;
-		}
-		else return true;
+		} else
+			return true;
 	}
-	
-	public List<Utilisateur> getAllUser() throws SQLException {
+
+	public List<Utilisateur> getAllUser() {
 		List<Utilisateur> liste = new ArrayList<>();
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM utilisateur");
-		if (resultSet==null) {
+		if (resultSet == null) {
 			return null;
 		}
-		while (resultSet.next()) {
-			Utilisateur user = new Utilisateur(resultSet.getString("id_utilisateur"), resultSet.getString("motDePasse"), resultSet.getString("nom"), resultSet.getString("prenom"));
-			liste.add(user);
+		try {
+			while (resultSet.next()) {
+				Utilisateur user = new Utilisateur(resultSet.getString("id_utilisateur"),
+						resultSet.getString("motDePasse"), resultSet.getString("nom"), resultSet.getString("prenom"));
+				liste.add(user);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return liste;
 	}
-	
-	public String getHash(String id_utilisateur) throws SQLException {
+
+	public String getHash(String id_utilisateur) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT motDePasse FROM utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
-		if (resultSet==null) {
+		if (resultSet == null) {
 			return null;
 		}
-		return resultSet.getString("motDePasse");
+		try {
+			return resultSet.getString("motDePasse");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
-	
-	public Map<Integer, String> getListFil(String id_utilisateur) throws SQLException{
+
+	public Map<Integer, String> getListFil(String id_utilisateur) {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		ResultSet resultSet = null;
 		ResultSet resultSet2 = null;
-		resultSet = requeteLecture("SELECT id_filDiscussion FROM estdans WHERE id_utilisateur='" + id_utilisateur + "'");
-		if (resultSet==null) {
+		resultSet = requeteLecture(
+				"SELECT id_filDiscussion FROM estdans WHERE id_utilisateur='" + id_utilisateur + "'");
+		if (resultSet == null) {
 			return null;
 		}
-		while (resultSet.next()) {
-			resultSet2 = requeteLecture("SELECT id_filDiscussion FROM fildiscussion WHERE id_filDiscussion='" + resultSet.getInt("id_filDiscussion") + "'");
-			map.put(resultSet.getInt("id_filDiscussion"), resultSet2.getString("premierMessage"));
+		try {
+			while (resultSet.next()) {
+				resultSet2 = requeteLecture("SELECT id_filDiscussion FROM fildiscussion WHERE id_filDiscussion='"
+						+ resultSet.getInt("id_filDiscussion") + "'");
+				map.put(resultSet.getInt("id_filDiscussion"), resultSet2.getString("premierMessage"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return map;
 	}
-	
-	public FilDiscussion getFil(int id_filDiscussion) throws SQLException {
+
+	public FilDiscussion getFil(int id_filDiscussion) {
 		ResultSet resultSetFirst = null;
 		ResultSet resultSet = null;
-		resultSetFirst = requeteLecture("SELECT * FROM message WHERE id_filDiscussion = " + id_filDiscussion + " ORDER BY date_emission LIMIT 1");
-		if (resultSetFirst==null) {
+		resultSetFirst = requeteLecture("SELECT * FROM message WHERE id_filDiscussion = " + id_filDiscussion
+				+ " ORDER BY date_emission LIMIT 1");
+		if (resultSetFirst == null) {
 			return null;
 		}
-		resultSet = requeteLecture("SELECT * FROM utilisateur WHERE id_utilisateur='"+ resultSetFirst.getString("id_utilisateur") +"'");
-		if (resultSet==null) {
+		try {
+			resultSet = requeteLecture(
+					"SELECT * FROM utilisateur WHERE id_utilisateur='" + resultSetFirst.getString("id_utilisateur") + "'");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if (resultSet == null) {
 			return null;
 		}
-		Message message = new Message(resultSetFirst.getString("id_utilisateur"), resultSet.getString("nom"), resultSet.getString("prenom"), resultSetFirst.getString("date_emission"), resultSetFirst.getString("statut"), resultSetFirst.getString("contenue"));
-		
-		FilDiscussion fil = new FilDiscussion(message, id_filDiscussion, resultSetFirst.getInt("id_groupe"));
+		Message message = null;
+		try {
+			message = new Message(resultSetFirst.getString("id_utilisateur"), resultSet.getString("nom"),
+					resultSet.getString("prenom"), resultSetFirst.getString("date_emission"),
+					resultSetFirst.getString("statut"), resultSetFirst.getString("contenue"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		FilDiscussion fil = null;
+		try {
+			fil = new FilDiscussion(message, id_filDiscussion, resultSetFirst.getInt("id_groupe"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return fil;
 	}
-	
-	public Utilisateur getUtilisateur(String id_utilisateur) throws SQLException {
+
+	public Utilisateur getUtilisateur(String id_utilisateur) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM utilisateur WHERE id_utilisateur = " + id_utilisateur);
-		if (resultSet==null) {
+		if (resultSet == null) {
 			return null;
 		}
-		Utilisateur user = new Utilisateur(id_utilisateur, resultSet.getString("motDePasse"), resultSet.getString("nom"), resultSet.getString("prenom"));
+		Utilisateur user= null;
+		try {
+			user = new Utilisateur(id_utilisateur, resultSet.getString("motDePasse"),
+					resultSet.getString("nom"), resultSet.getString("prenom"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return user;
 	}
-	
-	public Map<Integer, String> getListGroupe() throws SQLException {
+
+	public Map<Integer, String> getListGroupe() {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM groupe");
-		if (resultSet==null) {
+		if (resultSet == null) {
 			return null;
 		}
-		while (resultSet.next()) {
-			map.put(resultSet.getInt("id_groupe"),resultSet.getString("role"));
+		try {
+			while (resultSet.next()) {
+				map.put(resultSet.getInt("id_groupe"), resultSet.getString("role"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return map;
 	}
-	
-	public String getGroupe(int id_groupe) throws SQLException {
+
+	public String getGroupe(int id_groupe) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT role FROM groupe WHERE id_groupe = '"+ id_groupe + "'");
-		if (resultSet==null) {
+		resultSet = requeteLecture("SELECT role FROM groupe WHERE id_groupe = '" + id_groupe + "'");
+		if (resultSet == null) {
 			return null;
 		}
-		return resultSet.getString("role");
+		try {
+			return resultSet.getString("role");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
-	
-	public FilDiscussion ajouterFil(String id_utilisateur, String date, String message, int id_groupe) throws SQLException {
+
+	public FilDiscussion ajouterFil(String id_utilisateur, String date, String message, int id_groupe)
+			throws SQLException {
 		ResultSet resultSet = null;
 		int num;
-		resultSet = requeteLecture("SELECT id_filDiscussion FROM fildiscussion ORDER BY id_filDiscussion DESC LIMIT 1"); // Plus grand nombre de id_filDiscussion 
-		if (resultSet==null) {
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM fildiscussion ORDER BY id_filDiscussion DESC LIMIT 1"); // Plus
+																															// grand
+																															// nombre
+																															// de
+																															// id_filDiscussion
+		if (resultSet == null) {
 			return null;
 		}
 		num = resultSet.getInt("id_filDiscussion") + 1;
-		requeteEcriture("INSERT INTO fildiscussion VALUES ("+num+", "+id_groupe+", '" + message + "')");
-		requeteEcriture("INSERT INTO message VALUES (NULL, '"+ date +"', 'Rouge' ,'"+ message +"','"+ id_utilisateur +"',"+ num +")");
+		requeteEcriture("INSERT INTO fildiscussion VALUES (" + num + ", " + id_groupe + ", '" + message + "')");
+		requeteEcriture("INSERT INTO message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"
+				+ id_utilisateur + "'," + num + ")");
 		return this.getFil(num);
 	}
-	
+
 	/*
 	 * @return 0 si succès 1 sinon
 	 */
 	public int ajouterMessage(String id_utilisateur, int id_fil, String date, String message) {
-		return requeteEcriture("INSERT INTO message VALUES (NULL,'"+ date+"','Rouge','"+ message +"','"+ id_utilisateur +"',"+ id_fil +")");
+		return requeteEcriture("INSERT INTO message VALUES (NULL,'" + date + "','Rouge','" + message + "','"
+				+ id_utilisateur + "'," + id_fil + ")");
 	}
-	
+
 //	INSERT INTO fildiscussion VALUES (3, 1, 'Mon message');
 //	INSERT INTO message VALUES (NULL, '2021-12-31 12:35:59', 'Rouge','Mon message','Dpt01',3)
 
-	
-	
 	/*-- existeUser(String Id_user) : boolean
 	 *
 	 *-- getAllUser() : List user
