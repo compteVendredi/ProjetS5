@@ -1,18 +1,16 @@
 package utilisateur;
 
-import java.util.Date;
-
 public class Message {
 	private String id_utilisateur;
 	private String nom;
 	private String prenom;
-	private Date date;
+	private String date;
 	private Couleur statut;
 	private String message;
 
 	
 
-	public Message(String id_utilisateur, String nom, String prenom, Date date, Couleur statut, String message) {
+	public Message(String id_utilisateur, String nom, String prenom, String date, Couleur statut, String message) {
 		this.id_utilisateur = id_utilisateur;
 		this.nom = nom;
 		this.prenom = prenom;
