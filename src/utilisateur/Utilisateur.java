@@ -7,15 +7,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-
-import com.google.gson.Gson;
 
 public class Utilisateur {
 	private String identifiant;
 	private String motDePasse;
 	private String nom;
 	private String prenom;
+	private List<FilDiscussion> filDiscussion = new ArrayList<FilDiscussion>();
+	private List<Integer> groupes = new ArrayList<Integer>();
 	Socket socketOfClient = null;
 	BufferedWriter os = null;
 	BufferedReader is = null;
@@ -56,7 +58,7 @@ public class Utilisateur {
 	 * 
 	 * @param ip
 	 * @param port
-	 * @return 0 si succès 1 si inconnu 2 si mot de passe incorrect 3 sinon
+	 * @return 0 si succès 1 si refus 2 sinon
 	 */
 	public int seConnecter(String ip, int port) {
 
@@ -70,28 +72,18 @@ public class Utilisateur {
 
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			return 3;
+			return 2;
 		} catch (IOException e) {
 			e.printStackTrace();
-			return 3;
+			return 2;
 		}
 		if(envoyerMsgAuServeur(identifiant + " " + motDePasse) != 0) 
-			return 3;
+			return 2;
 		
-		String res = lireMsgServeur();
-		if(res != "OK") {
+		if(lireMsgServeur() != "OK") {
 			seDeconnecter();
-			String[] parts = res.split(" ");
-			String identifiant = parts[0];
-			if(parts[0] == "false")
-				return 1;
-			else
-				return 2;
+			return 1;
 		}
-		Gson gson = new Gson();	
-		Utilisateur target = gson.fromJson(lireMsgServeur(), Utilisateur.class);
-		nom = target.nom;
-		prenom = target.prenom;
 		
 		return 0;
 	}
@@ -150,34 +142,6 @@ public class Utilisateur {
 
 	public String getPrenom() {
 		return prenom;
-	}
-
-	/**
-	 * @return the filDiscussion
-	 */
-	public Set<FilDiscussion> getFilDiscussion() {
-		return null;
-	}
-
-	/**
-	 * @param filDiscussion the filDiscussion to set
-	 */
-	public void setFilDiscussion(Set<FilDiscussion> filDiscussion) {
-		
-	}
-
-	/**
-	 * @return the groupes
-	 */
-	public Set<Groupe> getGroupes() {
-		return null;
-	}
-
-	/**
-	 * @param groupes the groupes to set
-	 */
-	public void setGroupes(Set<Groupe> groupes) {
-		
 	}
 
 }
