@@ -39,7 +39,9 @@ public class ServiceThreadUtilisateur extends Thread {
 			String identifiant = parts[0];
 			String motDePasse = parts[1];
 			boolean estExistant = bdd.existeUser(identifiant);
-			boolean estMotDePasseCorrect = bdd.getHash(identifiant) == motDePasse;
+			boolean estMotDePasseCorrect = false;
+			if(estExistant)
+				estMotDePasseCorrect = bdd.getHash(identifiant).equals(motDePasse);
 
 			if (!estExistant || !estMotDePasseCorrect) {
 				os.write(estExistant + " " + estMotDePasseCorrect);
