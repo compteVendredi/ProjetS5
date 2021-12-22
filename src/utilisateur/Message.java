@@ -3,37 +3,24 @@ package utilisateur;
 import java.util.Date;
 
 public class Message {
-	private Utilisateur personneSource;
+	private String id_utilisateur;
+	private String nom;
+	private String prenom;
 	private Date date;
 	private Couleur statut;
 	private String message;
 
-	public Message(Utilisateur personneSource, Date date, Couleur statut, String message, Date dateEmission) {
-		this.personneSource = personneSource;
+	
+
+	public Message(String id_utilisateur, String nom, String prenom, Date date, Couleur statut, String message) {
+		this.id_utilisateur = id_utilisateur;
+		this.nom = nom;
+		this.prenom = prenom;
 		this.date = date;
 		this.statut = statut;
 		this.message = message;
-		this.dateEmission = dateEmission;
 	}
-
-	public void setPersonneSource(Utilisateur value) {
-		this.personneSource = value;
-	}
-
-	public Utilisateur getPersonneSource() {
-		return this.personneSource;
-	}
-
-	private Date dateEmission;
-
-	public void setDateEmission(Date value) {
-		this.dateEmission = value;
-	}
-
-	public Date getDateEmission() {
-		return this.dateEmission;
-	}
-
+	
 	public void setMessage(String value) {
 		this.message = value;
 	}
