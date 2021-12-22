@@ -4,14 +4,18 @@ import java.util.Date;
 
 public class Message {
 	private Utilisateur personneSource;
+	private Date date;
 	private Couleur statut;
 	private String message;
 
-	public Message(String message) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
+	public Message(Utilisateur personneSource, Date date, Couleur statut, String message, Date dateEmission) {
+		this.personneSource = personneSource;
+		this.date = date;
+		this.statut = statut;
+		this.message = message;
+		this.dateEmission = dateEmission;
 	}
-	
+
 	public void setPersonneSource(Utilisateur value) {
 		this.personneSource = value;
 	}
