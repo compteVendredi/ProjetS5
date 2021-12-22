@@ -1,28 +1,15 @@
 package interfaceGraphique;
 
-import serveur.Utilisateur;
+import utilisateur.Utilisateur;
 
 public class InterfaceUtilisateur {
-	/**
-	 * <pre>
-	 *           1..1          1..1
-	 * InterfaceUtilisateur ------------------------> Utilisateur
-	 *           &lt;       utilisateur
-	 * </pre>
-	 */
-	private Utilisateur utilisateur;
 
-	public void setUtilisateur(Utilisateur value) {
-		this.utilisateur = value;
-	}
-
-	public Utilisateur getUtilisateur() {
-		return this.utilisateur;
-	}
-
-	public void lancer() {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
+	public static void lancer() {
+		System.out.println("----------Utiliasteur-----------");
+		Utilisateur utilisateur = new Utilisateur("Dpt01", "aaaaaaaaaaaaaaaaaaaabb", "", "");
+		if(utilisateur.seConnecter("localhost", 9999) == 0) {
+			utilisateur.seDeconnecter();
+		}
 	}
 
 }

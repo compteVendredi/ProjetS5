@@ -1,7 +1,10 @@
-package serveur;
+package utilisateur;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+
+import utilisateur.Role;
+import utilisateur.Utilisateur;
 
 public class Groupe {
 	/**
@@ -14,6 +17,11 @@ public class Groupe {
 	private Set<Utilisateur> utilisateurs;
 	private Role role;
 
+	public Groupe() {
+		// TODO implement this operation
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
 	public Set<Utilisateur> getUtilisateurs() {
 		if (this.utilisateurs == null) {
 			this.utilisateurs = new HashSet<Utilisateur>();
@@ -21,30 +29,25 @@ public class Groupe {
 		return this.utilisateurs;
 	}
 
-	protected void setRole(Role value) {
+	public void setRole(Role value) {
 		this.role = value;
 	}
 
-	protected Role getRole() {
+	public Role getRole() {
 		return this.role;
 	}
 
-	public Integer creerTicket(String message) {
+	public int creerTicket(String message) {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}
 
-	public void Groupe() {
+	public int ajouterUtilisateur(Utilisateur utilisateur) {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}
 
-	public Integer ajouterUtilisateur(Utilisateur utilisateur) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public Integer supprimerUtilisateur(Utilisateur utilisateur) {
+	public int supprimerUtilisateur(Utilisateur utilisateur) {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}

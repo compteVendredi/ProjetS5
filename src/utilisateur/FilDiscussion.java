@@ -1,7 +1,9 @@
-package serveur;
+package utilisateur;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
+
+import utilisateur.Message;
 
 public class FilDiscussion {
 	/**
@@ -13,6 +15,11 @@ public class FilDiscussion {
 	 */
 	private Set<Message> messages;
 
+	public FilDiscussion(Message ticket) {
+		// TODO implement this operation
+		throw new UnsupportedOperationException("not implemented");
+	}	
+	
 	public Set<Message> getMessages() {
 		if (this.messages == null) {
 			this.messages = new HashSet<Message>();
@@ -22,35 +29,30 @@ public class FilDiscussion {
 
 	private Groupe destination;
 
-	protected void setDestination(Groupe value) {
+	public void setDestination(Groupe value) {
 		this.destination = value;
 	}
 
-	protected Groupe getDestination() {
+	public Groupe getDestination() {
 		return this.destination;
 	}
 
 	private Message ticket;
 
-	protected void setTicket(Message value) {
+	public void setTicket(Message value) {
 		this.ticket = value;
 	}
 
-	protected Message getTicket() {
+	public Message getTicket() {
 		return this.ticket;
 	}
 
-	public void FilDiscussion(Message ticket) {
+	public int ajotuerMessage(Message message) {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}
 
-	public Integer ajotuerMessage(Message message) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public Integer supprimerMessage(Message message) {
+	public int supprimerMessage(Message message) {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}

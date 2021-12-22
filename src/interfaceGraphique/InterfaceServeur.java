@@ -1,28 +1,17 @@
 package interfaceGraphique;
 
+import java.io.IOException;
+
+import serveur.BDD;
 import serveur.Serveur;
 
 public class InterfaceServeur {
-	/**
-	 * <pre>
-	 *           1..1          1..1
-	 * InterfaceServeur ------------------------> Serveur
-	 *           &lt;       serveur
-	 * </pre>
-	 */
-	private Serveur serveur;
 
-	public void setServeur(Serveur value) {
-		this.serveur = value;
-	}
-
-	public Serveur getServeur() {
-		return this.serveur;
-	}
-
-	public void lancer() {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
+	public static void lancer() {
+		System.out.println("--------Serveur--------");
+		BDD bdd = new BDD("root", "", "jdbc:mysql://localhost:3306/s5");
+		Serveur serveur = new Serveur(9999, bdd);
+		serveur.demarrer();
 	}
 
 }

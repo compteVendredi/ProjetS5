@@ -1,4 +1,4 @@
-package serveur;
+package utilisateur;
 
 import java.util.Date;
 
@@ -7,29 +7,34 @@ public class Message {
 	private Couleur statut;
 	private String message;
 
-	protected void setPersonneSource(Utilisateur value) {
+	public Message(String message) {
+		// TODO implement this operation
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
+	public void setPersonneSource(Utilisateur value) {
 		this.personneSource = value;
 	}
 
-	protected Utilisateur getPersonneSource() {
+	public Utilisateur getPersonneSource() {
 		return this.personneSource;
 	}
 
 	private Date dateEmission;
 
-	protected void setDateEmission(Date value) {
+	public void setDateEmission(Date value) {
 		this.dateEmission = value;
 	}
 
-	protected Date getDateEmission() {
+	public Date getDateEmission() {
 		return this.dateEmission;
 	}
 
-	protected void setMessage(String value) {
+	public void setMessage(String value) {
 		this.message = value;
 	}
 
-	protected String getMessage() {
+	public String getMessage() {
 		return this.message;
 	}
 
@@ -39,11 +44,6 @@ public class Message {
 	}
 
 	public Couleur getStatut() {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public void Message(String message) {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}
