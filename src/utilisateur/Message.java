@@ -5,12 +5,12 @@ public class Message {
 	private String nom;
 	private String prenom;
 	private String date;
-	private Couleur statut;
+	private String statut;
 	private String message;
 
 	
 
-	public Message(String id_utilisateur, String nom, String prenom, String date, Couleur statut, String message) {
+	public Message(String id_utilisateur, String nom, String prenom, String date, String statut, String message) {
 		this.id_utilisateur = id_utilisateur;
 		this.nom = nom;
 		this.prenom = prenom;
@@ -28,11 +28,6 @@ public class Message {
 	}
 
 	public String toString() {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public Couleur getStatut() {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}
