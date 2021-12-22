@@ -7,17 +7,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class Utilisateur {
 	private String identifiant;
 	private String motDePasse;
 	private String nom;
 	private String prenom;
-	private List<FilDiscussion> filDiscussion = new ArrayList<FilDiscussion>();
-	private List<Integer> groupes = new ArrayList<Integer>();
 	Socket socketOfClient = null;
 	BufferedWriter os = null;
 	BufferedReader is = null;
