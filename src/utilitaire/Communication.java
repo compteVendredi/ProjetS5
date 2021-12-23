@@ -4,7 +4,15 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+import com.google.gson.Gson;
+
 public class Communication {
+
+	public static Gson gson = new Gson();
+
+	public static final String demandeCreationMsg = "Demande creation message",
+			demandeTousFils = "Demande tous les fils", demandeFil = "Demande get fil",
+			demandeTousGroupes = "Demande tous les groupes";
 
 	public static void log(String msg) {
 		System.out.println(msg);
