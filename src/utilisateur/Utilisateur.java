@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import utilitaire.Communication;
 
@@ -34,7 +34,7 @@ public class Utilisateur {
 	 * 
 	 * @param ip
 	 * @param port
-	 * @return 0 si succès 1 si refus 2 sinon
+	 * @return 0 si succès 1 si id inexistant 2 si mauvais mot de passe 3 sinon
 	 */
 	public int seConnecter(String ip, int port) {
 
@@ -46,20 +46,24 @@ public class Utilisateur {
 
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
-			return 2;
+			return 3;
 		} catch (IOException e) {
 			e.printStackTrace();
-			return 2;
+			return 3;
 		}
 		if (Communication.envoyerMsg(os, identifiant + " " + motDePasse) != 0)
-			return 2;
-
-		if (Communication.lireMsg(is) != "OK") {
+			return 3;
+		String res = Communication.lireMsg(is);
+		if (!res.equals("OK")) {
+			String[] parts = res.split(" ");
+			String estExistant = parts[0];
 			seDeconnecter();
-			return 1;
+			if(estExistant == "false")
+				return 1;
+			else
+				return 2;
 		}
-		Gson gson = new Gson();
-		Utilisateur e = gson.fromJson(Communication.lireMsg(is), Utilisateur.class);
+		Utilisateur e = Communication.gson.fromJson(Communication.lireMsg(is), Utilisateur.class);
 		nom = e.nom;
 		prenom = e.prenom;
 
@@ -86,20 +90,65 @@ public class Utilisateur {
 		return 0;
 	}
 
-	public void envoyerMessage(Message message, FilDiscussion filDiscussion) {
-
+	/**
+	 * Envoie un message
+	 * @param message
+	 * @param filDiscussion
+	 * @return 0 si succès 1 sinon
+	 */
+	public int envoyerMessage(Message message, FilDiscussion filDiscussion) {
+		if (Communication.envoyerMsg(os, "Demande creation message") != 0)
+			return 1;
+		if (Communication.envoyerMsg(os, Communication.gson.toJson(message)) != 0)
+			return 1;
+		if (Communication.envoyerMsg(os, Communication.gson.toJson(filDiscussion)) != 0)
+			return 1;		
+		return 0;
 	}
 	
+	
+	/**
+	 * Récupère tous les fils de discussion
+	 * @return tous les fils de discussion ou null en cas d'échec
+	 */
 	public List<FilDiscussion> getAllFilDiscussion() {
-		return null;
+		if (Communication.envoyerMsg(os, "Demande tous les fils") != 0)
+			return null;
+		String res;
+		if((res = Communication.lireMsg(is)) == null) 
+			return null;
+		return Communication.gson.fromJson(res, new TypeToken<List<FilDiscussion>>(){}.getType());
 	}
 	
-	public FilDiscussion getFilDiscussion(int id_filDiscussion) {
-		return null;
-	}	
 	
+	/**
+	 * Récupère un fil de discussion
+	 * @param id_filDiscussion
+	 * @return le fil de discussion ou null si erreur
+	 */
+	public FilDiscussion getFilDiscussion(int id_filDiscussion) {
+		if (Communication.envoyerMsg(os, "Demande get fil") != 0)
+			return null;
+		if (Communication.envoyerMsg(os, " " + id_filDiscussion) != 0)
+			return null;
+		String res;
+		if((res = Communication.lireMsg(is)) == null) 
+			return null;
+		return Communication.gson.fromJson(res, FilDiscussion.class);
+	}
+	
+	
+	/**
+	 * 
+	 * @return tous les groupes  ou null si erreur
+	 */
 	public List<String> getAllGroupe(){
-		return null;
+		if (Communication.envoyerMsg(os, "Demande tous les groupes") != 0)
+			return null;
+		String res;
+		if((res = Communication.lireMsg(is)) == null) 
+			return null;
+		return Communication.gson.fromJson(res, new TypeToken<List<String>>(){}.getType());
 	}
 
 	public void setIdentifiant(String value) {
