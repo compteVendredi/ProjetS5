@@ -18,9 +18,9 @@ public class Utilisateur {
 	private String motDePasse;
 	private String nom;
 	private String prenom;
-	Socket socketServeur = null;
-	BufferedWriter os = null;
-	BufferedReader is = null;
+	transient Socket socketServeur = null;
+	transient BufferedWriter os = null;
+	transient BufferedReader is = null;
 
 	public Utilisateur(String identifiant, String motDePasse, String nom, String prenom) {
 		this.identifiant = identifiant;
