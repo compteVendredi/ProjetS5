@@ -51,6 +51,7 @@ public class ServiceThreadUtilisateur extends Thread {
 						+ " ou mot de passe correct = " + estMotDePasseCorrect + " refusé");
 			} else {
 				Gson gson = new Gson();
+				Communication.envoyerMsg(os, "OK");
 				Communication.envoyerMsg(os, gson.toJson(bdd.getUtilisateur(identifiant)));
 				while (estActif) {
 					// Read data to the server (sent from client).
