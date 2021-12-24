@@ -28,7 +28,7 @@ public class Connexion extends JFrame {
 	JButton btnConnexion = new JButton("CONNEXION");
 	
 	public Connexion() throws Exception {
-		super("Connexion à InterUniv");
+		super("Connexion Ã  InterUniv");
 		Container contentPane;
 		JPanel panel, panel_3, panel_4, panel_5;
 		JLabel lblNewLabel_1, lblNewLabel, lblMotDePasse;
@@ -129,8 +129,8 @@ public class Connexion extends JFrame {
 		password = new String(tempPassword);
 		utilisateur = new Utilisateur(userName, password, "", "");
 		if (utilisateur.seConnecter("localhost", 9999) == 0) {
-			/*User user = new User();
-			user.setVisible(true);*/
+			User user = new User();
+			user.setVisible(true);
 			Connexion.this.dispose();
 			utilisateur.seDeconnecter();
 		}
