@@ -26,6 +26,14 @@ public class Message {
 	public String getMessage() {
 		return this.message;
 	}
+	
+	public String getDate() {
+		return date;
+	}
+	
+	public String getId_utilisateur() {
+		return id_utilisateur;
+	}
 
 	public String toString() {
 		// TODO implement this operation

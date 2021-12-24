@@ -21,7 +21,7 @@ public class Utilisateur {
 	transient Socket socketServeur = null;
 	transient BufferedWriter os = null;
 	transient BufferedReader is = null;
-
+	
 	public Utilisateur(String identifiant, String motDePasse, String nom, String prenom) {
 		this.identifiant = identifiant;
 		this.motDePasse = motDePasse;
@@ -97,7 +97,7 @@ public class Utilisateur {
 	 * @return 0 si succès 1 sinon
 	 */
 	public int envoyerMessage(Message message, FilDiscussion filDiscussion) {
-		if (Communication.envoyerMsg(os, "Demande creation message") != 0)
+		if (Communication.envoyerMsg(os, Communication.demandeCreationMsg) != 0)
 			return 1;
 		if (Communication.envoyerMsg(os, Communication.gson.toJson(message)) != 0)
 			return 1;
@@ -112,8 +112,10 @@ public class Utilisateur {
 	 * @return tous les fils de discussion ou null en cas d'échec
 	 */
 	public List<FilDiscussion> getAllFilDiscussion() {
-		if (Communication.envoyerMsg(os, "Demande tous les fils") != 0)
+		if (Communication.envoyerMsg(os, Communication.demandeTousFils) != 0)
 			return null;
+		if (Communication.envoyerMsg(os, identifiant) != 0)
+			return null;		
 		String res;
 		if((res = Communication.lireMsg(is)) == null) 
 			return null;
@@ -127,7 +129,7 @@ public class Utilisateur {
 	 * @return le fil de discussion ou null si erreur
 	 */
 	public FilDiscussion getFilDiscussion(int id_filDiscussion) {
-		if (Communication.envoyerMsg(os, "Demande get fil") != 0)
+		if (Communication.envoyerMsg(os, Communication.demandeFil) != 0)
 			return null;
 		if (Communication.envoyerMsg(os, " " + id_filDiscussion) != 0)
 			return null;
@@ -143,7 +145,7 @@ public class Utilisateur {
 	 * @return tous les groupes  ou null si erreur
 	 */
 	public List<String> getAllGroupe(){
-		if (Communication.envoyerMsg(os, "Demande tous les groupes") != 0)
+		if (Communication.envoyerMsg(os, Communication.demandeTousGroupes) != 0)
 			return null;
 		String res;
 		if((res = Communication.lireMsg(is)) == null) 
