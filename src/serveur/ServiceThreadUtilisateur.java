@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import com.google.gson.Gson;
-
+import utilisateur.FilDiscussion;
+import utilisateur.Message;
 import utilitaire.Communication;
 
 public class ServiceThreadUtilisateur extends Thread {
@@ -40,7 +43,7 @@ public class ServiceThreadUtilisateur extends Thread {
 			String motDePasse = parts[1];
 			boolean estExistant = bdd.existeUser(identifiant);
 			boolean estMotDePasseCorrect = false;
-			if(estExistant)
+			if (estExistant)
 				estMotDePasseCorrect = bdd.getHash(identifiant).equals(motDePasse);
 
 			if (!estExistant || !estMotDePasseCorrect) {
@@ -50,9 +53,8 @@ public class ServiceThreadUtilisateur extends Thread {
 				Communication.log("Fin connexion n°" + clientNumber + " car existe = " + estExistant
 						+ " ou mot de passe correct = " + estMotDePasseCorrect + " refusé");
 			} else {
-				Gson gson = new Gson();
 				Communication.envoyerMsg(os, "OK");
-				Communication.envoyerMsg(os, gson.toJson(bdd.getUtilisateur(identifiant)));
+				Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getUtilisateur(identifiant)));
 				while (estActif) {
 					// Read data to the server (sent from client).
 					line = is.readLine();
@@ -62,12 +64,44 @@ public class ServiceThreadUtilisateur extends Thread {
 						Communication.log("QUIT reçu");
 						break;
 					}
+					traiterDemande(line);
 				}
 				Communication.log("Fin connexion n°" + clientNumber);
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void traiterDemande(String demande) {
+		switch (demande) {
+		case Communication.demandeCreationMsg:
+			Message msg = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
+			FilDiscussion filDiscu = Communication.gson.fromJson(Communication.lireMsg(is), FilDiscussion.class);
+			bdd.ajouterMessage(msg.getId_utilisateur(), filDiscu.getId_filDiscussion(),msg.getDate(), msg.getMessage());
+			break;
+		case Communication.demandeTousFils:
+			String id_utilisateur = Communication.lireMsg(is);
+			List<FilDiscussion> listeFils = new LinkedList<FilDiscussion>();
+			Map<Integer, String> mapTousFils = bdd.getListFil(id_utilisateur);
+			for (Map.Entry<Integer, String> pair : mapTousFils.entrySet()) {
+			    listeFils.add(new FilDiscussion(new Message(null, null, null, null, null, pair.getValue()),pair.getKey(), 0));
+			}
+			Communication.envoyerMsg(os, Communication.gson.toJson(listeFils));
+			break;
+		case Communication.demandeFil:
+			String id_filDiscussion = Communication.lireMsg(is);
+			Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getFil(Integer.parseInt(id_filDiscussion))));
+			break;
+		case Communication.demandeTousGroupes:
+			List<String> listeGroupe = new LinkedList<String>();
+			Map<Integer, String> mapTousGroupes = bdd.getListGroupe();	
+			for (Map.Entry<Integer, String> pair : mapTousGroupes.entrySet()) {
+				listeGroupe.add(pair.getValue());
+			}			
+			Communication.envoyerMsg(os, Communication.gson.toJson(mapTousGroupes));
+			break;
 		}
 	}
 

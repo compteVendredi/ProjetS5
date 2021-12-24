@@ -129,7 +129,7 @@ public class BDD {
 	
 	public boolean existeUser(String id_utilisateur) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM Utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			resultSet.next();
 			if (resultSet.getInt("total") == 0) {
@@ -145,7 +145,7 @@ public class BDD {
 	public List<Utilisateur> getAllUser() {
 		List<Utilisateur> liste = new ArrayList<>();
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT * FROM utilisateur");
+		resultSet = requeteLecture("SELECT * FROM Utilisateur");
 		try {
 			while (resultSet.next()) {
 				Utilisateur user = new Utilisateur(resultSet.getString("id_utilisateur"),resultSet.getString("motDePasse"), resultSet.getString("nom"), resultSet.getString("prenom"));
@@ -161,7 +161,7 @@ public class BDD {
 
 	public String getHash(String id_utilisateur) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT motDePasse FROM utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT motDePasse FROM Utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			resultSet.next();
 			return resultSet.getString("motDePasse");
@@ -175,10 +175,10 @@ public class BDD {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		ResultSet resultSet = null;
 		ResultSet resultSet2 = null;
-		resultSet = requeteLecture("SELECT id_filDiscussion FROM estdans WHERE id_utilisateur='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM Estdans WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			while (resultSet.next()) {
-				resultSet2 = requeteLecture("SELECT id_filDiscussion FROM fildiscussion WHERE id_filDiscussion='"+ resultSet.getInt("id_filDiscussion") + "'");
+				resultSet2 = requeteLecture("SELECT id_filDiscussion FROM Fildiscussion WHERE id_filDiscussion='"+ resultSet.getInt("id_filDiscussion") + "'");
 				resultSet2.next();
 				map.put(resultSet.getInt("id_filDiscussion"), resultSet2.getString("premierMessage"));	
 			}
@@ -192,12 +192,12 @@ public class BDD {
 	public FilDiscussion getFil(int id_filDiscussion) {
 		ResultSet resultSetFirst = null;
 		ResultSet resultSet = null;
-		resultSetFirst = requeteLecture("SELECT * FROM message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission LIMIT 1");
+		resultSetFirst = requeteLecture("SELECT * FROM Message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission LIMIT 1");
 		Message message = null;
 		FilDiscussion fil = null;
 		try {
 			resultSetFirst.next();
-			resultSet = requeteLecture("SELECT * FROM utilisateur WHERE id_utilisateur='" + resultSetFirst.getString("id_utilisateur") + "'");
+			resultSet = requeteLecture("SELECT * FROM Utilisateur WHERE id_utilisateur='" + resultSetFirst.getString("id_utilisateur") + "'");
 			resultSet.next();
 			message = new Message(resultSetFirst.getString("id_utilisateur"), resultSet.getString("nom"),
 					resultSet.getString("prenom"), resultSetFirst.getString("date_emission"),
@@ -212,7 +212,7 @@ public class BDD {
 
 	public Utilisateur getUtilisateur(String id_utilisateur) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT * FROM utilisateur WHERE id_utilisateur = '" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT * FROM Utilisateur WHERE id_utilisateur = '" + id_utilisateur + "'");
 		Utilisateur user = null;
 		try {
 			resultSet.next();
@@ -227,7 +227,7 @@ public class BDD {
 	public Map<Integer, String> getListGroupe() {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT * FROM groupe");
+		resultSet = requeteLecture("SELECT * FROM Groupe");
 		try {
 			while (resultSet.next()) {
 				map.put(resultSet.getInt("id_groupe"), resultSet.getString("role"));	
@@ -241,7 +241,7 @@ public class BDD {
 
 	public String getGroupe(int id_groupe) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT role FROM groupe WHERE id_groupe = '" + id_groupe + "'");
+		resultSet = requeteLecture("SELECT role FROM Groupe WHERE id_groupe = '" + id_groupe + "'");
 		try {
 			resultSet.next();
 			return resultSet.getString("role");
@@ -254,7 +254,7 @@ public class BDD {
 	public FilDiscussion ajouterFil(String id_utilisateur, String date, String message, int id_groupe) {
 		ResultSet resultSet = null;
 		int num;
-		resultSet = requeteLecture("SELECT id_filDiscussion FROM fildiscussion ORDER BY id_filDiscussion DESC LIMIT 1"); 
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM Fildiscussion ORDER BY id_filDiscussion DESC LIMIT 1"); 
 		
 		try {
 			resultSet.next();
@@ -272,7 +272,7 @@ public class BDD {
 	 * @return 0 si succès 1 sinon
 	 */
 	public int ajouterMessage(String id_utilisateur, int id_fil, String date, String message) {
-		return requeteEcriture("INSERT INTO message VALUES (NULL,'" + date + "','Rouge','" + message + "','"
+		return requeteEcriture("INSERT INTO Message VALUES (NULL,'" + date + "','Rouge','" + message + "','"
 				+ id_utilisateur + "'," + id_fil + ")");
 	}
 
