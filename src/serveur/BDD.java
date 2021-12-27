@@ -248,6 +248,10 @@ public class BDD {
 		return requeteEcriture("INSERT INTO message VALUES (NULL,'" + date + "','Rouge','" + message + "','"
 				+ id_utilisateur + "'," + id_fil + ")");
 	}
+	
+	public int ajouterEstDans(String id_utilisateur, int id_filDiscussion) {
+		return requeteEcriture("INSERT INTO EstDans VALUES ('"+ id_utilisateur +"', "+ id_filDiscussion + ")");
+	}
 
 
 	/* ajouterUser(String id_user, String hashMDP, String Nom, String prenom) : int (0 true, 1 error, 2 existe deja)
