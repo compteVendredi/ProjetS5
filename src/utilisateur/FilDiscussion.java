@@ -1,33 +1,24 @@
 package utilisateur;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilDiscussion {
 	
-	private Set<Message> messages;
+	private List<Message> messages = new ArrayList<>();
 	private int id_filDiscussion;
 	private int id_groupe;
 
 	public FilDiscussion(Message ticket,int id_filDiscussion, int id_groupe) {
-		messages.add(ticket);
+		this.messages.add(ticket);
 		this.id_filDiscussion = id_filDiscussion;
 		this.id_groupe = id_groupe;
 	}	
 	
-	public Set<Message> getMessages() {
-		if (this.messages == null) {
-			this.messages = new HashSet<Message>();
-		}
+	public List<Message> getMessages() {
 		return this.messages;
 	}
 
-	private Message ticket;
-
-	public Message getTicket() {
-		return this.ticket;
-	}
-	
 	public int getId_filDiscussion() {
 		return id_filDiscussion;
 	}
