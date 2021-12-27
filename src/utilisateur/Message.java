@@ -18,31 +18,49 @@ public class Message {
 		this.statut = statut;
 		this.message = message;
 	}
-	
-	public void setMessage(String value) {
-		this.message = value;
+
+
+
+	public String getStatut() {
+		return statut;
 	}
 
-	public String getMessage() {
-		return this.message;
+
+
+	public void setStatut(String statut) {
+		this.statut = statut;
 	}
-	
-	public String getDate() {
-		return date;
-	}
-	
+
+
+
 	public String getId_utilisateur() {
 		return id_utilisateur;
 	}
 
-	public String toString() {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
+
+
+	public String getNom() {
+		return nom;
 	}
 
-	public void setStatut() {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
+
+
+	public String getPrenom() {
+		return prenom;
 	}
+
+
+
+	public String getDate() {
+		return date;
+	}
+
+
+
+	public String getMessage() {
+		return message;
+	}
+	
+	
 
 }
