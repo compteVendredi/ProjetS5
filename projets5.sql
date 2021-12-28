@@ -1,7 +1,6 @@
 DROP TABLE Appartenance;
 DROP TABLE EstDans;
 DROP TABLE Lu;
-
 DROP TABLE FilDiscussion;
 DROP TABLE Message;
 DROP TABLE Groupe;
@@ -10,7 +9,7 @@ DROP TABLE Utilisateur;
 
 CREATE TABLE Utilisateur
 (
-	id_utilisateur VARCHAR(6),
+	id_utilisateur VARCHAR(6) NOT NULL,
 	motDePasse VARCHAR(32),
 	nom VARCHAR(35),
 	prenom VARCHAR(35),
@@ -54,7 +53,7 @@ CREATE TABLE Appartenance
 	id_utilisateur VARCHAR(6),
 	id_groupe VARCHAR(20),	
 	CONSTRAINT pk_Appartenance PRIMARY KEY(id_groupe, id_utilisateur),
-	CONSTRAINT fk_Appartenance_id_groupe FOREIGN KEY (id_groupe) REFERENCES Groupe(id_groupe),
+	CONSTRAINT fk_Appartenance_id_groupe FOREIGN KEY (id_groupe) REFERENCES Groupe(role),
 	CONSTRAINT fk_Appartenance_id_utilisateur FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
 );
 
