@@ -39,12 +39,15 @@ public class ServiceThreadUtilisateur extends Thread {
 
 			line = is.readLine();
 			String[] parts = line.split(" ");
-			String identifiant = parts[0];
-			String motDePasse = parts[1];
-			boolean estExistant = bdd.existeUser(identifiant);
-			boolean estMotDePasseCorrect = false;
-			if (estExistant)
-				estMotDePasseCorrect = bdd.getHash(identifiant).equals(motDePasse);
+			boolean estExistant = false, estMotDePasseCorrect = false;
+			String identifiant = "";
+			if(parts.length == 2) {
+				identifiant = parts[0];
+				String motDePasse = parts[1];
+				estExistant = bdd.existeUser(identifiant);
+				if (estExistant)
+					estMotDePasseCorrect = bdd.getHash(identifiant).equals(motDePasse);
+			}
 
 			if (!estExistant || !estMotDePasseCorrect) {
 				os.write(estExistant + " " + estMotDePasseCorrect);
@@ -63,8 +66,10 @@ public class ServiceThreadUtilisateur extends Thread {
 					if (line.equals("QUIT")) {
 						Communication.log("QUIT reçu");
 						break;
-					}
+					} 
+					System.out.println("Début service serveur reçu : " + line);
 					traiterDemande(line);
+					System.out.println("Fin service");
 				}
 				Communication.log("Fin connexion n°" + clientNumber);
 			}
@@ -99,8 +104,9 @@ public class ServiceThreadUtilisateur extends Thread {
 			Map<Integer, String> mapTousGroupes = bdd.getListGroupe();	
 			for (Map.Entry<Integer, String> pair : mapTousGroupes.entrySet()) {
 				listeGroupe.add(pair.getValue());
+				System.out.println(pair.getValue());
 			}			
-			Communication.envoyerMsg(os, Communication.gson.toJson(mapTousGroupes));
+			Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupe));
 			break;
 		}
 	}
