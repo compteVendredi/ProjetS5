@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.reflect.TypeToken;
@@ -18,6 +19,7 @@ public class Utilisateur {
 	private String motDePasse;
 	private String nom;
 	private String prenom;
+	private List<Groupe> listeGroupes = new ArrayList<>();
 	transient Socket socketServeur = null;
 	transient BufferedWriter os = null;
 	transient BufferedReader is = null;
@@ -139,18 +141,32 @@ public class Utilisateur {
 		return Communication.gson.fromJson(res, FilDiscussion.class);
 	}
 	
+	public void ajouterGroupe(Groupe groupe) {
+		listeGroupes.add(groupe);
+		groupe.ajouterUtilisateur(this);
+	}
 	
+	public List<Groupe> getGroupes() {
+		return listeGroupes;
+	}
 	/**
 	 * 
 	 * @return tous les groupes  ou null si erreur
 	 */
-	public List<String> getAllGroupe(){
+	public List<String> receiveAllGroupe(){
 		if (Communication.envoyerMsg(os, Communication.demandeTousGroupes) != 0)
 			return null;
 		String res;
 		if((res = Communication.lireMsg(is)) == null) 
 			return null;
 		return Communication.gson.fromJson(res, new TypeToken<List<String>>(){}.getType());
+	}
+	
+	public void actualiseGroupe() {
+		List<String> groupes = receiveAllGroupe();
+		
+		for (int i = 0; i < groupes.size(); i++)
+			listeGroupes.add(new Groupe(groupes.get(i)));
 	}
 
 	public void setIdentifiant(String value) {
