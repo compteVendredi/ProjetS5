@@ -2,14 +2,23 @@ package interfaceGraphique.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import javax.swing.JTree;
 import javax.swing.border.TitledBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
+import utilisateur.FilDiscussion;
+import utilisateur.Groupe;
+import utilisateur.Utilisateur;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.util.List;
+
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -26,9 +35,12 @@ import javax.swing.GroupLayout.Alignment;
 
 public class User extends JFrame {
 	private static final long serialVersionUID = 1L;
+	private Utilisateur utilisateurSession;
 	
-	public User() {
+	public User(Utilisateur utilisateurSession) {
 		super("InterUniv");
+		this.utilisateurSession = utilisateurSession;
+		
 		getContentPane().setBackground(Color.DARK_GRAY);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
@@ -73,7 +85,7 @@ public class User extends JFrame {
 		
 		JPanel panel_5 = new JPanel();
 		panel_5.setBackground(Color.GRAY);
-		panel_5.setPreferredSize(new Dimension(490, 150));
+		panel_5.setPreferredSize(new Dimension(480, 150));
 		panel_2.add(panel_5);
 		panel_5.setLayout(new BorderLayout(0, 0));
 		
@@ -101,17 +113,35 @@ public class User extends JFrame {
 		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		panel_4.add(scrollPane_2);
 		
-		JTree tree = new JTree();
+	
+		DefaultMutableTreeNode mainRoot = new DefaultMutableTreeNode("Fils de Discussion");
+		DefaultTreeModel treeModele = new DefaultTreeModel(mainRoot);
+		JTree tree = new JTree(treeModele);
+		tree.setShowsRootHandles(true);
+		//utilisateurSession.actualiseGroupe();
+		List<Groupe> listeGroupes = utilisateurSession.getGroupes();
+		for (int i = 0; i < listeGroupes.size(); i++) {
+			DefaultMutableTreeNode newGroupe = new DefaultMutableTreeNode(listeGroupes.get(i).getIdGroupe());
+			System.out.println(listeGroupes.get(i).getIdGroupe());
+			mainRoot.add(newGroupe);
+		}
+		
 		tree.setVisibleRowCount(100);
-		tree.setToolTipText("");
-		tree.setRootVisible(false);
 		tree.setPreferredSize(new Dimension(100, 100));
-		tree.setBorder(new TitledBorder(null, "Fils de discussion", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		tree.setBorder(new TitledBorder(null, null, TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		tree.setBackground(Color.LIGHT_GRAY);
 		scrollPane_2.setViewportView(tree);
+		
+		
 		setBackground(Color.WHITE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setSize(700, 500);
 		setLocationRelativeTo(null);
+		
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent event) {
+				utilisateurSession.seDeconnecter();
+			}
+		});
 	}
 }

@@ -2,7 +2,6 @@ package interfaceGraphique.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -19,104 +18,143 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
+import utilisateur.Groupe;
 import utilisateur.Utilisateur;
 
 public class Connexion extends JFrame {
 	private static final long serialVersionUID = -983602126963088259L;
-	private JTextField textField;
+	private JTextField idField;
 	private JPasswordField passwordField;
 	JButton btnConnexion = new JButton("CONNEXION");
 	
 	public Connexion() throws Exception {
 		super("Connexion à InterUniv");
-		Container contentPane;
-		JPanel panel, panel_3, panel_4, panel_5;
-		JLabel lblNewLabel_1, lblNewLabel, lblMotDePasse;
-		GridBagConstraints gbc_passwordField;
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setSize(475, 350);
+		this.setLocationRelativeTo(null);
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		getContentPane().add(initBackGroundPanel());
+	}
+	
+	private JPanel initBackGroundPanel() {
+		JPanel backGroundPanel, headPanel, tailPanel, midPanel;
 		
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setSize(475, 350);
-		setLocationRelativeTo(null);
-		contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout(0, 0));
-			
-		panel = new JPanel();
-		contentPane.add(panel);
-		panel.setLayout(new BorderLayout(0, 0));
-			
-		panel_3 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel_3.getLayout();
+		backGroundPanel = new JPanel();
+		backGroundPanel.setLayout(new BorderLayout(0, 0));
+		headPanel = initHeadPanel();
+		backGroundPanel.add(headPanel, BorderLayout.NORTH);
+		tailPanel = initTailPanel();
+		backGroundPanel.add(tailPanel, BorderLayout.SOUTH);
+		midPanel = initMidPanel();
+		backGroundPanel.add(midPanel, BorderLayout.CENTER);
+		return backGroundPanel;
+	}
+	
+	private JPanel initHeadPanel() {
+		JPanel headPanel;
+		JLabel logo;
+		
+		headPanel = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) headPanel.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
-		panel_3.setBackground(Color.DARK_GRAY);
-		panel_3.setPreferredSize(new Dimension(0, 80));
-		panel.add(panel_3, BorderLayout.NORTH);
+		headPanel.setBackground(Color.DARK_GRAY);
+		headPanel.setPreferredSize(new Dimension(0, 80));
+		logo = new JLabel("InterUniv");
+		logo.setPreferredSize(new Dimension(140, 70));
+		logo.setHorizontalAlignment(SwingConstants.LEFT);
+		logo.setForeground(Color.WHITE);
+		logo.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 32));
+		headPanel.add(logo);
+		return headPanel;
+	}
+	
+	private JPanel initTailPanel() {
+		JPanel tailPanel;
 		
-		lblNewLabel_1 = new JLabel("InterUniv");
-		lblNewLabel_1.setPreferredSize(new Dimension(140, 70));
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNewLabel_1.setForeground(Color.WHITE);
-		lblNewLabel_1.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 32));
-		panel_3.add(lblNewLabel_1);
-			
-		panel_4 = new JPanel();
-		panel_4.setBackground(Color.DARK_GRAY);
-		panel_4.setPreferredSize(new Dimension(0, 80));
-		panel.add(panel_4, BorderLayout.SOUTH);
-			
+		tailPanel = new JPanel();
+		tailPanel.setBackground(Color.DARK_GRAY);
+		tailPanel.setPreferredSize(new Dimension(0, 80));
 		btnConnexion.setFont(new Font("Dialog", Font.BOLD, 12));
 		btnConnexion.setForeground(Color.WHITE);
 		btnConnexion.setBackground(Color.GRAY);
 		btnConnexion.addActionListener(this::btnConnexionListener);
-		panel_4.add(btnConnexion);
-			
-		panel_5 = new JPanel();
-		panel_5.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel_5.setBackground(Color.GRAY);
-		panel_5.setForeground(Color.BLACK);
-		panel.add(panel_5, BorderLayout.CENTER);
-		GridBagLayout gbl_panel_5 = new GridBagLayout();
-		gbl_panel_5.columnWidths = new int[]{32, 142, 278, 0};
-		gbl_panel_5.rowHeights = new int[]{29, 35, 29, 0, 0};
-		gbl_panel_5.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel_5.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		panel_5.setLayout(gbl_panel_5);
-			
-		lblNewLabel = new JLabel("Identifiant:");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNewLabel.setForeground(Color.WHITE);
-		lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 22));
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_lblNewLabel.gridx = 1;
-		gbc_lblNewLabel.gridy = 1;
-		panel_5.add(lblNewLabel, gbc_lblNewLabel);
-			
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.insets = new Insets(0, 0, 5, 0);
-		gbc_textField.gridx = 2;
-		gbc_textField.gridy = 1;
-		panel_5.add(textField, gbc_textField);
-		textField.setColumns(10);
-			
-		lblMotDePasse = new JLabel("Mot de passe:");
-		lblMotDePasse.setForeground(Color.WHITE);
-		lblMotDePasse.setFont(new Font("Dialog", Font.BOLD, 22));
-		GridBagConstraints gbc_lblMotDePasse = new GridBagConstraints();
-		gbc_lblMotDePasse.anchor = GridBagConstraints.WEST;
-		gbc_lblMotDePasse.insets = new Insets(0, 0, 0, 5);
-		gbc_lblMotDePasse.gridx = 1;
-		gbc_lblMotDePasse.gridy = 3;
-		panel_5.add(lblMotDePasse, gbc_lblMotDePasse);
-			
+		tailPanel.add(btnConnexion);
+		return tailPanel;
+	}
+	
+	private JPanel initMidPanel() {
+		JPanel midPanel;
+		GridBagLayout gblMidPanel;
+		JLabel idLabel, passwordLabel;
+		
+		midPanel = new JPanel();
+		midPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		midPanel.setBackground(Color.GRAY);
+		midPanel.setForeground(Color.BLACK);
+		gblMidPanel = new GridBagLayout();
+		gblMidPanel.columnWidths = new int[]{32, 142, 278, 0};
+		gblMidPanel.rowHeights = new int[]{29, 35, 29, 0, 0};
+		gblMidPanel.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gblMidPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		midPanel.setLayout(gblMidPanel);
+		idLabel = new JLabel("Identifiant:");
+		idLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		idLabel.setForeground(Color.WHITE);
+		idLabel.setFont(new Font("Dialog", Font.BOLD, 22));
+		midPanel.add(idLabel, positionIdLabel());
+		idField = new JTextField();
+		idField.setColumns(10);
+		midPanel.add(idField, positionIdField());
+		passwordLabel = new JLabel("Mot de passe:");
+		passwordLabel.setForeground(Color.WHITE);
+		passwordLabel.setFont(new Font("Dialog", Font.BOLD, 22));
+		midPanel.add(passwordLabel, positionPasswordLabel());
 		passwordField = new JPasswordField();
-		gbc_passwordField = new GridBagConstraints();
-		gbc_passwordField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_passwordField.gridx = 2;
-		gbc_passwordField.gridy = 3;
-		panel_5.add(passwordField, gbc_passwordField);
+		midPanel.add(passwordField, positionPasswordField());
+		return midPanel;
+	}
+	
+	private GridBagConstraints positionIdLabel () {
+		GridBagConstraints gbcIdLabel;
+		
+		gbcIdLabel = new GridBagConstraints();
+		gbcIdLabel.anchor = GridBagConstraints.WEST;
+		gbcIdLabel.insets = new Insets(0, 0, 5, 5);
+		gbcIdLabel.gridx = 1;
+		gbcIdLabel.gridy = 1;
+		return gbcIdLabel;
+	}
+	
+	private GridBagConstraints positionIdField() {
+		GridBagConstraints gbcIdField;
+		
+		gbcIdField = new GridBagConstraints();
+		gbcIdField.fill = GridBagConstraints.HORIZONTAL;
+		gbcIdField.insets = new Insets(0, 0, 5, 0);
+		gbcIdField.gridx = 2;
+		gbcIdField.gridy = 1;
+		return gbcIdField;
+	}
+	
+	private GridBagConstraints positionPasswordLabel() {
+		GridBagConstraints gbcPasswordLabel;
+		
+		gbcPasswordLabel = new GridBagConstraints();
+		gbcPasswordLabel.anchor = GridBagConstraints.WEST;
+		gbcPasswordLabel.insets = new Insets(0, 0, 0, 5);
+		gbcPasswordLabel.gridx = 1;
+		gbcPasswordLabel.gridy = 3;
+		return gbcPasswordLabel;
+	}
+	
+	private GridBagConstraints positionPasswordField() {
+		GridBagConstraints gbcPasswordField;
+		
+		gbcPasswordField = new GridBagConstraints();
+		gbcPasswordField.fill = GridBagConstraints.HORIZONTAL;
+		gbcPasswordField.gridx = 2;
+		gbcPasswordField.gridy = 3;
+		return gbcPasswordField;
 	}
 	
 	private void btnConnexionListener(ActionEvent event) {
@@ -124,15 +162,16 @@ public class Connexion extends JFrame {
 		char tempPassword[];
 		Utilisateur utilisateur;
 		
-		userName = textField.getText();
+		userName = idField.getText();
 		tempPassword = passwordField.getPassword();
 		password = new String(tempPassword);
 		utilisateur = new Utilisateur(userName, password, "", "");
 		if (utilisateur.seConnecter("localhost", 9999) == 0) {
-			User user = new User();
+			utilisateur.ajouterGroupe(new Groupe("L3 INFO A22"));
+			utilisateur.ajouterGroupe(new Groupe("SALLE U-104"));
+			User user = new User(utilisateur);
 			user.setVisible(true);
 			Connexion.this.dispose();
-			utilisateur.seDeconnecter();
 		}
 	}
 }
