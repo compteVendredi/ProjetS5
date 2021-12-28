@@ -88,6 +88,9 @@ INSERT INTO Groupe
 VALUES	("TPA22"),
 		("Service technique");
 
+INSERT INTO Appartenance
+VALUES	("Dpt01", "TA22");
+
 INSERT INTO FilDiscussion 
 VALUES	(1, "TPA22", "Le premier message"),
 		(2, "Service technique", "Le truc est pété");
