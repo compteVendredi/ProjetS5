@@ -20,6 +20,7 @@ import javax.swing.border.BevelBorder;
 
 import utilisateur.Groupe;
 import utilisateur.Utilisateur;
+import utilitaire.HashUtil;
 
 public class Connexion extends JFrame {
 	private static final long serialVersionUID = -983602126963088259L;
@@ -165,7 +166,7 @@ public class Connexion extends JFrame {
 		userName = idField.getText();
 		tempPassword = passwordField.getPassword();
 		password = new String(tempPassword);
-		utilisateur = new Utilisateur(userName, password, "", "");
+		utilisateur = new Utilisateur(userName, HashUtil.applySha256(password), "", "");
 		if (utilisateur.seConnecter("localhost", 9999) == 0) {
 			utilisateur.ajouterGroupe(new Groupe("L3 INFO A22"));
 			utilisateur.ajouterGroupe(new Groupe("SALLE U-104"));
