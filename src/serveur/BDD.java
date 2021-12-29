@@ -135,7 +135,9 @@ public class BDD {
 			return null;
 		}
 	}
-
+	
+	// faire la transie de rouge -> orange
+	// creer une table recu 
 	public Map<Integer, String> getListFil(String id_utilisateur) {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		List<Integer> liste = new ArrayList<>();
@@ -156,7 +158,10 @@ public class BDD {
 			return null;
 		}
 	}
-
+	
+	// add tout les message dans le fil
+	// faire le lu
+	// changement etat orange -> vert
 	public FilDiscussion getFil(int id_filDiscussion) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM Message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission LIMIT 1");
@@ -174,6 +179,19 @@ public class BDD {
 			resultSet = requeteLecture("SELECT id_groupe FROM FilDiscussion WHERE id_filDiscussion=" + id_filDiscussion);
 			resultSet.next();
 			fil = new FilDiscussion(message, id_filDiscussion, resultSet.getString("id_groupe"));
+			resultSet = requeteLecture("SELECT * FROM `message` WHERE id_filDiscussion = " + id_filDiscussion + " ORDER BY date_emission");
+			List<String[]> list = new ArrayList<>();
+			resultSet.next();
+			while(resultSet.next()) {
+				String[] tab = new String[] {resultSet.getString("id_utilisateur"),resultSet.getString("date_emission"),resultSet.getString("statut"),resultSet.getString("contenu")}; 
+				list.add(tab);
+			}
+			for (String[] tab : list) {
+				resultSet = requeteLecture("SELECT * FROM Utilisateur WHERE id_utilisateur='" + tab[0] + "'");
+				resultSet.next();
+				message = new Message(tab[0], resultSet.getString("nom"), resultSet.getString("prenom"), tab[1], tab[2], tab[3]);
+				fil.insertMessage(message);
+			}
 			return fil;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -255,7 +273,8 @@ public class BDD {
 	}
 
 
-	/* ajouterUser(String id_user, String hashMDP, String Nom, String prenom) : int (0 true, 1 error, 2 existe deja)
+	/* getNbMessageNonLu(String id_utilisateur, int id_filDiscussion) : int
+	 * ajouterUser(String id_user, String hashMDP, String Nom, String prenom) : int (0 true, 1 error, 2 existe deja)
 	 * ajouterGroupe(String role) : int (0 true, 1 error)
 	 * 
 	 * supUser(String ID_user) : (0 true, 1 error)
