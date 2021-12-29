@@ -154,7 +154,6 @@ public class Utilisateur {
 		String res;
 		if((res = Communication.lireMsg(is)) == null) 
 			return null;
-		System.out.println("aaa" + res);
 		return Communication.gson.fromJson(res, new TypeToken<List<String>>(){}.getType());
 	}
 	/**
