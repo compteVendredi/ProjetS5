@@ -143,7 +143,6 @@ public class BDD {
 		resultSet = requeteLecture("SELECT id_filDiscussion FROM estdans WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			while (resultSet.next()) {
-				System.out.println(resultSet.getInt("id_filDiscussion"));
 				liste.add(resultSet.getInt("id_filDiscussion"));
 			}
 			for (Integer id_fil : liste) {
@@ -174,8 +173,7 @@ public class BDD {
 			message = new Message(id, resultSet.getString("nom"), resultSet.getString("prenom"), date, statut, contenu);
 			resultSet = requeteLecture("SELECT id_groupe FROM filDiscussion WHERE id_filDiscussion=" + id_filDiscussion);
 			resultSet.next();
-			System.out.println(message.getDate());
-			fil = new FilDiscussion(message, id_filDiscussion, resultSet.getInt("id_groupe"));
+			fil = new FilDiscussion(message, id_filDiscussion, resultSet.getString("id_groupe"));
 			return fil;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -197,34 +195,22 @@ public class BDD {
 		}
 	}
 
-	public Map<Integer, String> getListGroupe() {
-		Map<Integer, String> map = new HashMap<Integer, String>();
+	public List<String> getListGroupe() {
+		List<String> liste = new ArrayList<>();
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM groupe");
 		try {
 			while (resultSet.next()) {
-				map.put(resultSet.getInt("id_groupe"), resultSet.getString("role"));	
+				liste.add(resultSet.getString("id_groupe"));	
 			}
-			return map;
+			return liste;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public String getGroupe(int id_groupe) {
-		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT role FROM groupe WHERE id_groupe = '" + id_groupe + "'");
-		try {
-			resultSet.next();
-			return resultSet.getString("role");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public FilDiscussion ajouterFil(String id_utilisateur, String date, String message, int id_groupe) {
+	public FilDiscussion ajouterFil(String id_utilisateur, String date, String message, String id_groupe) {
 		ResultSet resultSet = null;
 		int num;
 		resultSet = requeteLecture("SELECT id_filDiscussion FROM fildiscussion ORDER BY id_filDiscussion DESC LIMIT 1"); 
@@ -232,7 +218,7 @@ public class BDD {
 		try {
 			resultSet.next();
 			num = resultSet.getInt("id_filDiscussion") + 1;
-			requeteEcriture("INSERT INTO fildiscussion VALUES (" + num + ", " + id_groupe + ", '" + message + "')");
+			requeteEcriture("INSERT INTO fildiscussion VALUES (" + num + ", '" + id_groupe + "', '" + message + "')");
 			requeteEcriture("INSERT INTO message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"+ id_utilisateur + "'," + num + ")");
 			return this.getFil(num);
 		} catch (SQLException e) {
