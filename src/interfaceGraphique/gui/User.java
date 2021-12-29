@@ -119,10 +119,10 @@ public class User extends JFrame {
 		JTree tree = new JTree(treeModele);
 		tree.setShowsRootHandles(true);
 		//utilisateurSession.actualiseGroupe();
-		List<Groupe> listeGroupes = utilisateurSession.getGroupes();
+		List<String> listeGroupes = utilisateurSession.getGroupesUtilisateur();
 		for (int i = 0; i < listeGroupes.size(); i++) {
-			DefaultMutableTreeNode newGroupe = new DefaultMutableTreeNode(listeGroupes.get(i).getIdGroupe());
-			System.out.println(listeGroupes.get(i).getIdGroupe());
+			DefaultMutableTreeNode newGroupe = new DefaultMutableTreeNode(listeGroupes.get(i));
+			System.out.println(listeGroupes.get(i));
 			mainRoot.add(newGroupe);
 		}
 		

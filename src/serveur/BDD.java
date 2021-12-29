@@ -94,7 +94,7 @@ public class BDD {
 		
 	public boolean existeUser(String id_utilisateur) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM Utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			resultSet.next();
 			if (resultSet.getInt("total") == 0) {
@@ -110,7 +110,7 @@ public class BDD {
 	public List<Utilisateur> getAllUser() {
 		List<Utilisateur> liste = new ArrayList<>();
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT * FROM utilisateur");
+		resultSet = requeteLecture("SELECT * FROM Utilisateur");
 		try {
 			while (resultSet.next()) {
 				Utilisateur user = new Utilisateur(resultSet.getString("id_utilisateur"),resultSet.getString("motDePasse"), resultSet.getString("nom"), resultSet.getString("prenom"));
@@ -126,7 +126,7 @@ public class BDD {
 
 	public String getHash(String id_utilisateur) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT motDePasse FROM utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT motDePasse FROM Utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			resultSet.next();
 			return resultSet.getString("motDePasse");
@@ -140,13 +140,13 @@ public class BDD {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		List<Integer> liste = new ArrayList<>();
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT id_filDiscussion FROM estdans WHERE id_utilisateur='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM Estdans WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			while (resultSet.next()) {
 				liste.add(resultSet.getInt("id_filDiscussion"));
 			}
 			for (Integer id_fil : liste) {
-				resultSet = requeteLecture("SELECT premierMessage FROM fildiscussion WHERE id_filDiscussion="+ id_fil);
+				resultSet = requeteLecture("SELECT premierMessage FROM Fildiscussion WHERE id_filDiscussion="+ id_fil);
 				resultSet.next();
 				map.put(id_fil, resultSet.getString("premierMessage"));	
 			}
@@ -159,7 +159,7 @@ public class BDD {
 
 	public FilDiscussion getFil(int id_filDiscussion) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT * FROM message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission LIMIT 1");
+		resultSet = requeteLecture("SELECT * FROM Message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission LIMIT 1");
 		Message message;
 		FilDiscussion fil;
 		try {
@@ -168,10 +168,10 @@ public class BDD {
 			String date = resultSet.getString("date_emission");
 			String statut = resultSet.getString("statut");
 			String contenu = resultSet.getString("contenu");
-			resultSet = requeteLecture("SELECT * FROM utilisateur WHERE id_utilisateur='" + id + "'");
+			resultSet = requeteLecture("SELECT * FROM Utilisateur WHERE id_utilisateur='" + id + "'");
 			resultSet.next();
 			message = new Message(id, resultSet.getString("nom"), resultSet.getString("prenom"), date, statut, contenu);
-			resultSet = requeteLecture("SELECT id_groupe FROM filDiscussion WHERE id_filDiscussion=" + id_filDiscussion);
+			resultSet = requeteLecture("SELECT id_groupe FROM FilDiscussion WHERE id_filDiscussion=" + id_filDiscussion);
 			resultSet.next();
 			fil = new FilDiscussion(message, id_filDiscussion, resultSet.getString("id_groupe"));
 			return fil;
@@ -183,7 +183,7 @@ public class BDD {
 
 	public Utilisateur getUtilisateur(String id_utilisateur) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT * FROM utilisateur WHERE id_utilisateur = '" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT * FROM Utilisateur WHERE id_utilisateur = '" + id_utilisateur + "'");
 		Utilisateur user = null;
 		try {
 			resultSet.next();
@@ -198,7 +198,7 @@ public class BDD {
 	public List<String> getListGroupe() {
 		List<String> liste = new ArrayList<>();
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT * FROM groupe");
+		resultSet = requeteLecture("SELECT * FROM Groupe");
 		try {
 			while (resultSet.next()) {
 				liste.add(resultSet.getString("id_groupe"));	
@@ -209,17 +209,32 @@ public class BDD {
 			return null;
 		}
 	}
+	
+	public List<String> getListGroupeUtilisateur(String id_utilisateur) {
+		List<String> liste = new ArrayList<>();
+		ResultSet resultSet = null;
+		resultSet = requeteLecture("SELECT * FROM Appartenance where id_utilisateur='" + id_utilisateur + "'");
+		try {
+			while (resultSet.next()) {
+				liste.add(resultSet.getString("id_groupe"));	
+			}
+			return liste;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}	
 
 	public FilDiscussion ajouterFil(String id_utilisateur, String date, String message, String id_groupe) {
 		ResultSet resultSet = null;
 		int num;
-		resultSet = requeteLecture("SELECT id_filDiscussion FROM fildiscussion ORDER BY id_filDiscussion DESC LIMIT 1"); 
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM Fildiscussion ORDER BY id_filDiscussion DESC LIMIT 1"); 
 		
 		try {
 			resultSet.next();
 			num = resultSet.getInt("id_filDiscussion") + 1;
-			requeteEcriture("INSERT INTO fildiscussion VALUES (" + num + ", '" + id_groupe + "', '" + message + "')");
-			requeteEcriture("INSERT INTO message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"+ id_utilisateur + "'," + num + ")");
+			requeteEcriture("INSERT INTO Fildiscussion VALUES (" + num + ", '" + id_groupe + "', '" + message + "')");
+			requeteEcriture("INSERT INTO Message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"+ id_utilisateur + "'," + num + ")");
 			return this.getFil(num);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -231,7 +246,7 @@ public class BDD {
 	 * @return 0 si succès 1 sinon
 	 */
 	public int ajouterMessage(String id_utilisateur, int id_fil, String date, String message) {
-		return requeteEcriture("INSERT INTO message VALUES (NULL,'" + date + "','Rouge','" + message + "','"
+		return requeteEcriture("INSERT INTO Message VALUES (NULL,'" + date + "','Rouge','" + message + "','"
 				+ id_utilisateur + "'," + id_fil + ")");
 	}
 	

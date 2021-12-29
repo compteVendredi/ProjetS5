@@ -12,7 +12,7 @@ public class Communication {
 
 	public static final String demandeCreationMsg = "Demande creation message",
 			demandeTousFils = "Demande tous les fils", demandeFil = "Demande get fil",
-			demandeTousGroupes = "Demande tous les groupes";
+			demandeTousGroupes = "Demande tous les groupes", demandeGroupeUtilisateur = "Demande groupe utilisateur";
 
 	public static void log(String msg) {
 		System.out.println(msg);

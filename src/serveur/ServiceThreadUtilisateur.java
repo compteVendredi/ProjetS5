@@ -91,7 +91,7 @@ public class ServiceThreadUtilisateur extends Thread {
 			List<FilDiscussion> listeFils = new LinkedList<FilDiscussion>();
 			Map<Integer, String> mapTousFils = bdd.getListFil(id_utilisateur);
 			for (Map.Entry<Integer, String> pair : mapTousFils.entrySet()) {
-			    listeFils.add(new FilDiscussion(new Message(null, null, null, null, null, pair.getValue()),pair.getKey(), 0));
+			    listeFils.add(new FilDiscussion(new Message(null, null, null, null, null, pair.getValue()),pair.getKey(), ""));
 			}
 			Communication.envoyerMsg(os, Communication.gson.toJson(listeFils));
 			break;
@@ -100,13 +100,13 @@ public class ServiceThreadUtilisateur extends Thread {
 			Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getFil(Integer.parseInt(id_filDiscussion))));
 			break;
 		case Communication.demandeTousGroupes:
-			List<String> listeGroupe = new LinkedList<String>();
-			Map<Integer, String> mapTousGroupes = bdd.getListGroupe();	
-			for (Map.Entry<Integer, String> pair : mapTousGroupes.entrySet()) {
-				listeGroupe.add(pair.getValue());
-				System.out.println(pair.getValue());
-			}			
+			List<String> listeGroupe = bdd.getListGroupe();	
 			Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupe));
+			break;
+		case Communication.demandeGroupeUtilisateur:
+			String id_user = Communication.lireMsg(is);
+			List<String> listeGroupeUtilisateur = bdd.getListGroupeUtilisateur(id_user);	
+			Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupeUtilisateur));			
 			break;
 		}
 	}

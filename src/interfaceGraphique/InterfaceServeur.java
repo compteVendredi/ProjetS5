@@ -14,7 +14,7 @@ public class InterfaceServeur {
 		serveur.demarrer();
 
 		try {
-			TimeUnit.SECONDS.sleep(10);
+			TimeUnit.SECONDS.sleep(100);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
