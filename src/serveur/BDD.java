@@ -190,7 +190,7 @@ public class BDD {
 				resultSet = requeteLecture("SELECT * FROM Utilisateur WHERE id_utilisateur='" + tab[0] + "'");
 				resultSet.next();
 				message = new Message(tab[0], resultSet.getString("nom"), resultSet.getString("prenom"), tab[1], tab[2], tab[3]);
-				fil.insertMessage(message);
+				fil.ajouterMessage(message);
 			}
 			return fil;
 		} catch (SQLException e) {
