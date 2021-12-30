@@ -18,6 +18,10 @@ public class FilDiscussion {
 	public List<Message> getMessages() {
 		return this.messages;
 	}
+	
+	public void ajouterMessage(Message msg) {
+		messages.add(msg);
+	}	
 
 	public int getId_filDiscussion() {
 		return id_filDiscussion;
