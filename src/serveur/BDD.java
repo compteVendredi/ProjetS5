@@ -159,10 +159,10 @@ public class BDD {
 		}
 	}
 	
-	// add tout les message dans le fil
+	// add tout les message dans le fil	
 	// faire le lu
 	// changement etat orange -> vert
-	public FilDiscussion getFil(int id_filDiscussion) {
+	public FilDiscussion getFil(int id_filDiscussion, String identifiant) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM Message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission LIMIT 1");
 		Message message;
@@ -197,7 +197,7 @@ public class BDD {
 			e.printStackTrace();
 			return null;
 		}
-	}
+	}	
 
 	public Utilisateur getUtilisateur(String id_utilisateur) {
 		ResultSet resultSet = null;
