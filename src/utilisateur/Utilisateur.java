@@ -135,6 +135,8 @@ public class Utilisateur {
 			return null;
 		if (Communication.envoyerMsg(os, " " + id_filDiscussion) != 0)
 			return null;
+		if (Communication.envoyerMsg(os, " " + identifiant) != 0)
+			return null;				
 		String res;
 		if((res = Communication.lireMsg(is)) == null) 
 			return null;
