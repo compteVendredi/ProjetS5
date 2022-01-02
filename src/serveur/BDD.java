@@ -253,7 +253,7 @@ public class BDD {
 			num = resultSet.getInt("id_filDiscussion") + 1;
 			requeteEcriture("INSERT INTO Fildiscussion VALUES (" + num + ", '" + id_groupe + "', '" + message + "')");
 			requeteEcriture("INSERT INTO Message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"+ id_utilisateur + "'," + num + ")");
-			return this.getFil(num);
+			return this.getFil(num, id_utilisateur);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
