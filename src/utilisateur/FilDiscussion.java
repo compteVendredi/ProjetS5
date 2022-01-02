@@ -30,4 +30,8 @@ public class FilDiscussion {
 	public String getId_groupe() {
 		return id_groupe;
 	}
+	
+	public String toString() {
+		return messages.get(0).getMessage();
+	}
 }
