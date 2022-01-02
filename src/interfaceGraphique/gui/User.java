@@ -8,20 +8,25 @@ import javax.swing.JTree;
 import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-
+import javax.swing.tree.TreePath;
+import com.mysql.cj.protocol.Message;
 import utilisateur.FilDiscussion;
 import utilisateur.Groupe;
 import utilisateur.Utilisateur;
-
+import utilitaire.HashUtil;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -32,10 +37,15 @@ import java.awt.FlowLayout;
 import java.awt.CardLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class User extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private Utilisateur utilisateurSession;
+	private FilDiscussion fd = null;
+	private JPanel panel;
+	private JTextArea textArea;
 	
 	public User(Utilisateur utilisateurSession) {
 		super("InterUniv");
@@ -44,65 +54,6 @@ public class User extends JFrame {
 		getContentPane().setBackground(Color.DARK_GRAY);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.DARK_GRAY);
-		getContentPane().add(panel, BorderLayout.CENTER);
-		panel.setLayout(new BorderLayout(0, 0));
-		
-		JLabel lblNewJgoodiesTitle = new JLabel("Titre du sujet");
-		lblNewJgoodiesTitle.setForeground(Color.WHITE);
-		lblNewJgoodiesTitle.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewJgoodiesTitle.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 22));
-		panel.add(lblNewJgoodiesTitle, BorderLayout.NORTH);
-		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBackground(Color.DARK_GRAY);
-		panel_1.setPreferredSize(new Dimension(100, 100));
-		panel.add(panel_1, BorderLayout.SOUTH);
-		panel_1.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panel_3 = new JPanel();
-		panel_3.setBackground(Color.DARK_GRAY);
-		panel_1.add(panel_3, BorderLayout.EAST);
-		
-		JButton btnNewButton = new JButton("ENVOYER");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		panel_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		panel_3.add(btnNewButton);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		panel_1.add(scrollPane, BorderLayout.CENTER);
-		
-		JTextArea textArea = new JTextArea();
-		scrollPane.setViewportView(textArea);
-		
-		JPanel panel_2 = new JPanel();
-		panel.add(panel_2, BorderLayout.CENTER);
-		panel_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		JPanel panel_5 = new JPanel();
-		panel_5.setBackground(Color.GRAY);
-		panel_5.setPreferredSize(new Dimension(480, 150));
-		panel_2.add(panel_5);
-		panel_5.setLayout(new BorderLayout(0, 0));
-		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		panel_5.add(scrollPane_1, BorderLayout.CENTER);
-		
-		JTextArea txtrLoremIpsumDolor = new JTextArea();
-		txtrLoremIpsumDolor.setBackground(new Color(173, 216, 230));
-		txtrLoremIpsumDolor.setLineWrap(true);
-		txtrLoremIpsumDolor.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce quis justo vel erat dapibus sollicitudin. Praesent venenatis aliquet tellus. Nunc dictum vestibulum massa ut dictum. Aliquam erat volutpat. Mauris molestie vehicula justo quis ullamcorper. Etiam convallis nunc lectus, id feugiat ex tempus elementum. Nullam vehicula eget tellus et tincidunt. Donec consectetur, risus quis dignissim malesuada, odio sem ultricies urna, id blandit lacus nulla id est. Morbi volutpat quis ipsum a vehicula. Aliquam ut metus vestibulum, lobortis urna a, luctus ipsum. Quisque mattis faucibus lacus a sollicitudin. Fusce tristique, dolor a fringilla lobortis, massa ex vestibulum elit, auctor ultrices massa diam ut nibh.");
-		txtrLoremIpsumDolor.setEditable(false);
-		scrollPane_1.setViewportView(txtrLoremIpsumDolor);
-		
-		JLabel lblNewLabel = new JLabel("Par [Prenom] [Nom] le [Date] \u00E0 [Heure]");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_5.add(lblNewLabel, BorderLayout.NORTH);
 		
 		JPanel panel_4 = new JPanel();
 		panel_4.setPreferredSize(new Dimension(200, 0));
@@ -118,11 +69,16 @@ public class User extends JFrame {
 		DefaultTreeModel treeModele = new DefaultTreeModel(mainRoot);
 		JTree tree = new JTree(treeModele);
 		tree.setShowsRootHandles(true);
-		//utilisateurSession.actualiseGroupe();
+		utilisateurSession.actualiseGroupe();
 		List<String> listeGroupes = utilisateurSession.getGroupesUtilisateur();
 		for (int i = 0; i < listeGroupes.size(); i++) {
 			DefaultMutableTreeNode newGroupe = new DefaultMutableTreeNode(listeGroupes.get(i));
-			System.out.println(listeGroupes.get(i));
+			List<FilDiscussion> listeFils = utilisateurSession.getAllFilDiscussion();
+			for (ListIterator<FilDiscussion> iterateur = listeFils.listIterator(); iterateur.hasNext();) {
+					FilDiscussion newFil = iterateur.next();
+					DefaultMutableTreeNode newSujet = new DefaultMutableTreeNode(newFil);
+					newGroupe.add(newSujet);
+			}
 			mainRoot.add(newGroupe);
 		}
 		
@@ -132,16 +88,125 @@ public class User extends JFrame {
 		tree.setBackground(Color.LIGHT_GRAY);
 		scrollPane_2.setViewportView(tree);
 		
-		
 		setBackground(Color.WHITE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setSize(700, 500);
 		setLocationRelativeTo(null);
+		this.addTreeLeftClicListener(tree);
 		
+		panel = new JPanel();
+		panel.setBackground(Color.DARK_GRAY);
+		getContentPane().add(panel, BorderLayout.CENTER);
+		panel.setLayout(new BorderLayout(0, 0));
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent event) {
 				utilisateurSession.seDeconnecter();
 			}
 		});
+	}
+	
+	private JPanel initSujetPanel(DefaultMutableTreeNode node) {
+		JPanel sujetPanel = new JPanel();
+		sujetPanel.setBackground(Color.DARK_GRAY);
+		sujetPanel.setLayout(new BorderLayout(0, 0));
+		sujetPanel.add(initTitreSujet(node), BorderLayout.NORTH);
+		//panel d'envoy
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(Color.DARK_GRAY);
+		panel_1.setPreferredSize(new Dimension(100, 100));
+		sujetPanel.add(panel_1, BorderLayout.SOUTH);
+		panel_1.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(Color.DARK_GRAY);
+		panel_1.add(panel_3, BorderLayout.EAST);
+		
+		JButton envoyerMessage = new JButton("ENVOYER");
+		envoyerMessage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		panel_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panel_3.add(envoyerMessage);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		panel_1.add(scrollPane, BorderLayout.CENTER);
+		
+		JTextArea textArea = new JTextArea();
+		scrollPane.setViewportView(textArea);
+	
+		fd = (FilDiscussion)node.getUserObject();
+		List<utilisateur.Message> lm = fd.getMessages();
+		for(ListIterator<utilisateur.Message> iterareur = lm.listIterator(); iterareur.hasNext();) {	
+			utilisateur.Message message = iterareur.next();
+			
+			JPanel panel_2 = new JPanel();
+			sujetPanel.add(panel_2, BorderLayout.CENTER);
+			panel_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+			System.out.println(message.getPrenom());
+			JPanel panel_5 = new JPanel();
+			panel_5.setBackground(Color.GRAY);
+			panel_5.setPreferredSize(new Dimension(480, 150));
+			panel_2.add(panel_5);
+			panel_5.setLayout(new BorderLayout(0, 0));
+		
+			JScrollPane scrollPane_1 = new JScrollPane();
+			scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			panel_5.add(scrollPane_1, BorderLayout.CENTER);
+		
+			JTextArea txtrLoremIpsumDolor = new JTextArea();
+			txtrLoremIpsumDolor.setBackground(new Color(173, 216, 230));
+			txtrLoremIpsumDolor.setLineWrap(true);
+			txtrLoremIpsumDolor.setText(message.getMessage());
+			txtrLoremIpsumDolor.setEditable(false);
+			scrollPane_1.setViewportView(txtrLoremIpsumDolor);
+		
+			JLabel lblNewLabel = new JLabel("Par " + message.getPrenom() + " " + message.getNom() + " le " + message.getDate());
+			lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			panel_5.add(lblNewLabel, BorderLayout.NORTH);
+		}
+		return sujetPanel;
+	}
+	
+	private JLabel initTitreSujet(DefaultMutableTreeNode node) {
+		FilDiscussion fd = (FilDiscussion) node.getUserObject();
+		JLabel titreSujet = new JLabel(fd.toString());
+		titreSujet.setForeground(Color.WHITE);
+		titreSujet.setHorizontalAlignment(SwingConstants.CENTER);
+		titreSujet.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 22));
+		return titreSujet;
+	}
+	
+	private void addTreeLeftClicListener(final JTree tree) {
+		MouseListener ml = new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					int selRow = tree.getRowForLocation(e.getX(), e.getY());
+					TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+					if (selRow != -1) {
+						tree.clearSelection();
+						tree.setSelectionPath(selPath);
+						DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+						//Object obj = node.getUserObject();
+						Class<FilDiscussion> c = FilDiscussion.class;
+						boolean b = c.isInstance(node.getUserObject());
+						System.out.println(b);
+						if (b) {
+							JPanel sujetPanel = initSujetPanel(node);
+							panel.removeAll();
+							panel.add(sujetPanel, BorderLayout.CENTER);
+							panel.revalidate();
+						}
+					}
+				}
+			}};
+		tree.addMouseListener(ml);
+	}
+	
+	private void btnEnvoyerMessageListener(ActionEvent event) {
+		utilisateur.Message message;
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		message = new utilisateur.Message(utilisateurSession.getIdentifiant(), utilisateurSession.getNom(), utilisateurSession.getPrenom(), dtf.format(LocalDateTime.now()), "new", textArea.getText());
+		utilisateurSession.envoyerMessage(message, fd);
 	}
 }

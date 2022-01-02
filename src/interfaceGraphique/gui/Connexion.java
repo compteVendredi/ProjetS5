@@ -168,8 +168,6 @@ public class Connexion extends JFrame {
 		password = new String(tempPassword);
 		utilisateur = new Utilisateur(userName, HashUtil.applySha256(password), "", "");
 		if (utilisateur.seConnecter("localhost", 9999) == 0) {
-			utilisateur.ajouterGroupe(new Groupe("L3 INFO A22"));
-			utilisateur.ajouterGroupe(new Groupe("SALLE U-104"));
 			User user = new User(utilisateur);
 			user.setVisible(true);
 			Connexion.this.dispose();
