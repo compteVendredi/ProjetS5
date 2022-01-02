@@ -181,6 +181,7 @@ public class BDD {
 			fil = new FilDiscussion(message, id_filDiscussion, resultSet.getString("id_groupe"));
 			resultSet = requeteLecture("SELECT * FROM `message` WHERE id_filDiscussion = " + id_filDiscussion + " ORDER BY date_emission");
 			List<String[]> list = new ArrayList<>();
+			resultSet.next();
 			while(resultSet.next()) {
 				String[] tab = new String[] {resultSet.getString("id_utilisateur"),resultSet.getString("date_emission"),resultSet.getString("statut"),resultSet.getString("contenu")}; 
 				list.add(tab);
