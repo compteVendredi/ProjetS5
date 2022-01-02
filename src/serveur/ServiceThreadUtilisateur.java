@@ -97,7 +97,8 @@ public class ServiceThreadUtilisateur extends Thread {
 			break;
 		case Communication.demandeFil:
 			String id_filDiscussion = Communication.lireMsg(is);
-			Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getFil(Integer.parseInt(id_filDiscussion))));
+			String identifiant = Communication.lireMsg(is);
+			Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getFil(Integer.parseInt(id_filDiscussion), identifiant)));
 			break;
 		case Communication.demandeTousGroupes:
 			List<String> listeGroupe = bdd.getListGroupe();	
@@ -108,8 +109,7 @@ public class ServiceThreadUtilisateur extends Thread {
 			List<String> listeGroupeUtilisateur = bdd.getListGroupeUtilisateur(id_user);	
 			Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupeUtilisateur));			
 			break;
-		}
-	}
+		
 
 	public void arreter() {
 		try {
