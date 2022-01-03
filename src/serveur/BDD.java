@@ -140,14 +140,21 @@ public class BDD {
 	// creer une table recu 
 	public Map<Integer, String> getListFil(String id_utilisateur) {
 		Map<Integer, String> map = new HashMap<Integer, String>();
-		List<Integer> liste = new ArrayList<>();
+		List<String> listeGroupe = new ArrayList<>();
+		List<Integer> listeFil = new ArrayList<>();
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT id_filDiscussion FROM Estdans WHERE id_utilisateur='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT id_groupe FROM appartenance WHERE id_utilisateur ='" + id_utilisateur + "'");
 		try {
 			while (resultSet.next()) {
-				liste.add(resultSet.getInt("id_filDiscussion"));
+				listeGroupe.add(resultSet.getString("id_groupe"));
 			}
-			for (Integer id_fil : liste) {
+			for (String id_groupe : listeGroupe) {
+				resultSet = requeteLecture("SELECT id_filDiscussion FROM fildiscussion WHERE id_groupe = '"+ id_groupe +"'");
+				resultSet.next();
+				listeFil.add(resultSet.getInt("id_filDiscussion"));
+			}
+			for (Integer id_fil : listeFil) {
+				requeteEcriture("INSERT INTO Recu VALUES ("+ id_fil + ",'"+ id_utilisateur +"')");
 				resultSet = requeteLecture("SELECT premierMessage FROM Fildiscussion WHERE id_filDiscussion="+ id_fil);
 				resultSet.next();
 				map.put(id_fil, resultSet.getString("premierMessage"));	
@@ -198,6 +205,29 @@ public class BDD {
 			return null;
 		}
 	}	
+	
+	public FilDiscussion getFil2(int id_filDiscussion, String id_utilisateur) {
+		ResultSet resultSet = null;
+		resultSet = requeteLecture("SELECT * FROM Message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission");
+		// Message(String id_utilisateur, String nom, String prenom, String date, String statut, String message)
+		// FilDiscussion(Message ticket,int id_filDiscussion, String id_groupe)
+		
+		
+		/* select message.*, utilisateur.nom, utilisateur.prenom
+	    from message WHERE id_filDiscussion = 1 ORDER BY date_emission
+	    join utilisateur on utilisateur.id_utilisateur = message.id_utilisateur
+	    
+	    */
+		try {
+			resultSet.next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return null;
+	}
+	
 
 	public Utilisateur getUtilisateur(String id_utilisateur) {
 		ResultSet resultSet = null;
