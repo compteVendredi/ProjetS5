@@ -1,5 +1,6 @@
 package interfaceGraphique.gui;
 
+import utilisateur.Message;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -9,18 +10,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import com.mysql.cj.protocol.Message;
 import utilisateur.FilDiscussion;
-import utilisateur.Groupe;
 import utilisateur.Utilisateur;
-import utilitaire.HashUtil;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.util.List;
 import java.util.ListIterator;
-
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -31,12 +28,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
-import java.awt.GridLayout;
-import javax.swing.BoxLayout;
 import java.awt.FlowLayout;
-import java.awt.CardLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -94,6 +86,9 @@ public class User extends JFrame {
 		setLocationRelativeTo(null);
 		this.addTreeLeftClicListener(tree);
 		
+		JButton btnNewButton = new JButton("Ajouter Fil de discussion");
+		panel_4.add(btnNewButton, BorderLayout.SOUTH);
+		
 		panel = new JPanel();
 		panel.setBackground(Color.DARK_GRAY);
 		getContentPane().add(panel, BorderLayout.CENTER);
@@ -136,9 +131,10 @@ public class User extends JFrame {
 		scrollPane.setViewportView(textArea);
 	
 		fd = (FilDiscussion)node.getUserObject();
-		List<utilisateur.Message> lm = fd.getMessages();
-		for(ListIterator<utilisateur.Message> iterareur = lm.listIterator(); iterareur.hasNext();) {	
-			utilisateur.Message message = iterareur.next();
+		List<Message> lm = utilisateurSession.getFilDiscussion(fd.getId_filDiscussion()).getMessages();//fd.getMessages();
+		System.out.println(lm.size());
+		for(ListIterator<Message> iterareur = lm.listIterator(); iterareur.hasNext();) {	
+			Message message = iterareur.next();
 			
 			JPanel panel_2 = new JPanel();
 			sujetPanel.add(panel_2, BorderLayout.CENTER);
