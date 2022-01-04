@@ -133,9 +133,9 @@ public class Utilisateur {
 	public FilDiscussion getFilDiscussion(int id_filDiscussion) {
 		if (Communication.envoyerMsg(os, Communication.demandeFil) != 0)
 			return null;
-		if (Communication.envoyerMsg(os, " " + id_filDiscussion) != 0)
+		if (Communication.envoyerMsg(os, "" + id_filDiscussion) != 0)
 			return null;
-		if (Communication.envoyerMsg(os, " " + identifiant) != 0)
+		if (Communication.envoyerMsg(os, "" + identifiant) != 0)
 			return null;				
 		String res;
 		if((res = Communication.lireMsg(is)) == null) 
