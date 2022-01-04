@@ -136,25 +136,18 @@ public class BDD {
 		}
 	}
 	
-	// faire la transie de rouge -> orange
-	// creer une table recu 
 	public Map<Integer, String> getListFil(String id_utilisateur) {
 		Map<Integer, String> map = new HashMap<Integer, String>();
-		List<String> listeGroupe = new ArrayList<>();
-		List<Integer> listeFil = new ArrayList<>();
+		List<Integer> liste = new ArrayList<>();
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT id_groupe FROM appartenance WHERE id_utilisateur ='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM Estdans WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			while (resultSet.next()) {
-				listeGroupe.add(resultSet.getString("id_groupe"));
+				liste.add(resultSet.getInt("id_filDiscussion"));
 			}
-			for (String id_groupe : listeGroupe) {
-				resultSet = requeteLecture("SELECT id_filDiscussion FROM fildiscussion WHERE id_groupe = '"+ id_groupe +"'");
-				resultSet.next();
-				listeFil.add(resultSet.getInt("id_filDiscussion"));
-			}
-			for (Integer id_fil : listeFil) {
+			for (Integer id_fil : liste) {
 				requeteEcriture("INSERT INTO Recu VALUES ("+ id_fil + ",'"+ id_utilisateur +"')");
+				actualiseStatutRecu(id_fil);
 				resultSet = requeteLecture("SELECT premierMessage FROM Fildiscussion WHERE id_filDiscussion="+ id_fil);
 				resultSet.next();
 				map.put(id_fil, resultSet.getString("premierMessage"));	
@@ -166,10 +159,28 @@ public class BDD {
 		}
 	}
 	
-	// add tout les message dans le fil	
+	public void actualiseStatutRecu(int id_filDiscussion) {
+		ResultSet resultSet = null;
+		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM Recu WHERE id_filDiscussion =" + id_filDiscussion);
+		try {
+			resultSet.next();
+			int nb_recu = resultSet.getInt("total");
+			resultSet = requeteLecture("SELECT id_groupe FROM fildiscussion WHERE id_fildiscussion =" + id_filDiscussion);
+			resultSet.next();
+			String groupe = resultSet.getString("id_groupe");
+			resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM appartenance WHERE id_groupe ='" + groupe + "'");
+			resultSet.next();
+			if (nb_recu >= resultSet.getInt("total")+1) {
+				requeteEcriture("UPDATE message SET statut = 'Orange' WHERE id_filDiscussion = " + id_filDiscussion + " AND statut = 'Rouge'");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	// faire le lu
 	// changement etat orange -> vert
-	public FilDiscussion getFil(int id_filDiscussion, String identifiant) {
+	public FilDiscussion getFil(int id_filDiscussion, String id_utilisateur) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM Message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission LIMIT 1");
 		Message message;
@@ -188,10 +199,16 @@ public class BDD {
 			fil = new FilDiscussion(message, id_filDiscussion, resultSet.getString("id_groupe"));
 			resultSet = requeteLecture("SELECT * FROM `message` WHERE id_filDiscussion = " + id_filDiscussion + " ORDER BY date_emission");
 			List<String[]> list = new ArrayList<>();
+			List<Integer> listId_message = new ArrayList<>();
 			resultSet.next();
 			while(resultSet.next()) {
 				String[] tab = new String[] {resultSet.getString("id_utilisateur"),resultSet.getString("date_emission"),resultSet.getString("statut"),resultSet.getString("contenu")}; 
+				listId_message.add(resultSet.getInt("id_message"));
 				list.add(tab);
+			}
+			for (Integer id_message : listId_message) {
+				requeteEcriture("INSERT INTO lu VALUES ("+ id_message +",'" + id_utilisateur + "')");
+				actualiseStatutlu(id_message, id_filDiscussion);
 			}
 			for (String[] tab : list) {
 				resultSet = requeteLecture("SELECT * FROM Utilisateur WHERE id_utilisateur='" + tab[0] + "'");
@@ -208,7 +225,35 @@ public class BDD {
 	
 	public FilDiscussion getFil2(int id_filDiscussion, String id_utilisateur) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT * FROM Message WHERE id_filDiscussion = " + id_filDiscussion+ " ORDER BY date_emission");
+		List<Integer> list = new ArrayList<>();
+		Message message;
+		FilDiscussion fil;
+		resultSet = requeteLecture("SELECT id_groupe FROM FilDiscussion WHERE id_filDiscussion=" + id_filDiscussion);
+		try {
+			resultSet.next();
+			String id_groupe = resultSet.getString("id_groupe");
+			resultSet = requeteLecture("SELECT message.*, utilisateur.nom, utilisateur.prenom FROM message INNER JOIN utilisateur WHERE message.id_utilisateur = utilisateur.id_utilisateur AND message.id_filDiscussion = " + id_filDiscussion + " ORDER BY message.date_emission");
+			resultSet.next();
+			message = new Message(resultSet.getString("id_utilisateur"), resultSet.getString("nom"), resultSet.getString("prenom"), resultSet.getString("date_emission"), resultSet.getString("statut"), resultSet.getString("contenu"));
+			list.add(resultSet.getInt("id_message"));
+			fil = new FilDiscussion(message, id_filDiscussion, id_groupe);
+			while(resultSet.next()) {
+				message = new Message(resultSet.getString("id_utilisateur"), resultSet.getString("nom"), resultSet.getString("prenom"), resultSet.getString("date_emission"), resultSet.getString("statut"), resultSet.getString("contenu"));
+				list.add(resultSet.getInt("id_message"));
+				fil.ajouterMessage(message);
+			}
+			for (Integer id_message : list) {
+				requeteEcriture("INSERT INTO lu VALUES ("+ id_message +",'" + id_utilisateur + "')");
+				actualiseStatutlu(id_message, id_filDiscussion);
+			}
+			return fil;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		
+		
 		// Message(String id_utilisateur, String nom, String prenom, String date, String statut, String message)
 		// FilDiscussion(Message ticket,int id_filDiscussion, String id_groupe)
 		
@@ -218,16 +263,28 @@ public class BDD {
 	    join utilisateur on utilisateur.id_utilisateur = message.id_utilisateur
 	    
 	    */
-		try {
-			resultSet.next();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		return null;
+
+
 	}
 	
+	public void actualiseStatutlu(int id_message, int id_filDiscussion) {
+		ResultSet resultSet = null;
+		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM lu WHERE id_message =" + id_message);
+		try {
+			resultSet.next();
+			int nb_lu = resultSet.getInt("total");
+			resultSet = requeteLecture("SELECT id_groupe FROM fildiscussion WHERE id_fildiscussion =" + id_filDiscussion);
+			resultSet.next();
+			String groupe = resultSet.getString("id_groupe");
+			resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM appartenance WHERE id_groupe ='" + groupe + "'");
+			resultSet.next();
+			if (nb_lu >= resultSet.getInt("total")+1) {
+				requeteEcriture("UPDATE message SET statut = 'Vert' WHERE id_filDiscussion = " + id_filDiscussion + " AND statut = 'Orange'");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public Utilisateur getUtilisateur(String id_utilisateur) {
 		ResultSet resultSet = null;
@@ -277,12 +334,22 @@ public class BDD {
 		ResultSet resultSet = null;
 		int num;
 		resultSet = requeteLecture("SELECT id_filDiscussion FROM Fildiscussion ORDER BY id_filDiscussion DESC LIMIT 1"); 
-		
+		List<String> liste = new ArrayList<>();
 		try {
 			resultSet.next();
 			num = resultSet.getInt("id_filDiscussion") + 1;
 			requeteEcriture("INSERT INTO Fildiscussion VALUES (" + num + ", '" + id_groupe + "', '" + message + "')");
 			requeteEcriture("INSERT INTO Message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"+ id_utilisateur + "'," + num + ")");
+			resultSet = requeteLecture("SELECT id_utilisateur FROM appartenance WHERE id_groupe = '"+ id_groupe +"'");
+			while(resultSet.next()) {
+				liste.add(resultSet.getString("id_utilisateur"));
+			}
+			for (String id_user : liste) {
+				this.ajouterEstDans(id_user, num);
+			}
+			
+			this.ajouterEstDans(id_utilisateur, num);
+			requeteEcriture("INSERT INTO Recu VALUES ("+ num + ",'"+ id_utilisateur +"')");
 			return this.getFil(num, id_utilisateur);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -294,9 +361,11 @@ public class BDD {
 	 * @return 0 si succès 1 sinon
 	 */
 	public int ajouterMessage(String id_utilisateur, int id_fil, String date, String message) {
+		requeteEcriture("DELETE FROM Recu WHERE id_filDiscussion =" + id_fil);
 		return requeteEcriture("INSERT INTO Message VALUES (NULL,'" + date + "','Rouge','" + message + "','"
 				+ id_utilisateur + "'," + id_fil + ")");
 	}
+	// RETURNING id
 	
 	public int ajouterEstDans(String id_utilisateur, int id_filDiscussion) {
 		return requeteEcriture("INSERT INTO EstDans VALUES ('"+ id_utilisateur +"', "+ id_filDiscussion + ")");
