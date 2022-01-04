@@ -108,7 +108,9 @@ public class ServiceThreadUtilisateur extends Thread {
 			String id_user = Communication.lireMsg(is);
 			List<String> listeGroupeUtilisateur = bdd.getListGroupeUtilisateur(id_user);	
 			Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupeUtilisateur));			
-			break;
+			break;			
+		}
+	}
 		
 
 	public void arreter() {
