@@ -133,7 +133,7 @@ public class User extends JFrame {
 			Message message = iterareur.next();
 
 			JPanel panel_5 = new JPanel();
-			panel_5.setBackground(Color.GRAY);
+			panel_5.setBackground(Color.DARK_GRAY);
 			panel_5.setPreferredSize(new Dimension(480, 150));
 			panel_2.add(panel_5);
 			panel_5.setLayout(new BorderLayout(0, 0));
@@ -143,7 +143,7 @@ public class User extends JFrame {
 			panel_5.add(scrollPane_1, BorderLayout.CENTER);
 		
 			JTextArea txtrLoremIpsumDolor = new JTextArea();
-			txtrLoremIpsumDolor.setBackground(new Color(173, 216, 230));
+			txtrLoremIpsumDolor.setBackground(selectionnerCouleur(message.getStatut()));
 			txtrLoremIpsumDolor.setLineWrap(true);
 			txtrLoremIpsumDolor.setText(message.getMessage());
 			txtrLoremIpsumDolor.setEditable(false);
@@ -155,7 +155,14 @@ public class User extends JFrame {
 		}
 		return sujetPanel;
 	}
-	
+	private Color selectionnerCouleur(String couleur) {
+		switch(couleur) {
+		case "Rouge": return Color.RED;
+		case "Vert": return Color.GREEN;
+		case "Jaune": return Color.YELLOW;
+		default: return Color.GRAY;
+		}
+	}
 	private void addTreeLeftClicListener(final JTree tree) {
 		MouseListener ml = new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -195,7 +202,7 @@ public class User extends JFrame {
 	private void btnEnvoyerMessageListener(ActionEvent event) {
 		Message message;
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		message = new Message(utilisateurSession.getIdentifiant(), utilisateurSession.getNom(), utilisateurSession.getPrenom(), dtf.format(LocalDateTime.now()), "new", textMessage.getText());
+		message = new Message(utilisateurSession.getIdentifiant(), utilisateurSession.getNom(), utilisateurSession.getPrenom(), dtf.format(LocalDateTime.now()), "Rouge", textMessage.getText());
 		utilisateurSession.envoyerMessage(message, fd);
 	}
 }
