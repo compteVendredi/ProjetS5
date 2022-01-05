@@ -25,6 +25,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import java.awt.FlowLayout;
 import java.time.LocalDateTime;
@@ -35,7 +36,9 @@ public class User extends JFrame {
 	private Utilisateur utilisateurSession;
 	private FilDiscussion fd = null;
 	private JPanel panel;
-	private JTextArea textMessage;
+	private JTextArea textMessage, textMessage2;
+	JTextField textField;
+	JButton creerFil;
 	
 	public User(Utilisateur utilisateurSession) {
 		super("InterUniv");
@@ -85,7 +88,7 @@ public class User extends JFrame {
 		this.addTreeLeftClicListener(tree);
 		
 		JButton btnNewButton = new JButton("Ajouter Fil de discussion");
-		btnNewButton.addActionListener(this::btnCreerFil);
+		btnNewButton.addActionListener(this::btnAjouterFil);
 		panel_4.add(btnNewButton, BorderLayout.SOUTH);
 		
 		panel = new JPanel();
@@ -155,6 +158,7 @@ public class User extends JFrame {
 		}
 		return sujetPanel;
 	}
+	
 	private Color selectionnerCouleur(String couleur) {
 		switch(couleur) {
 		case "Rouge": return Color.RED;
@@ -189,11 +193,36 @@ public class User extends JFrame {
 	}
 	private JPanel createPanel() {
 		JPanel creationPanel = new JPanel();
-		creationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		creationPanel.setLayout(new BorderLayout(5, 5));
+		JLabel titre = new JLabel("Créer un nouveau fil de discussion", JLabel.CENTER);
+		creationPanel.add(titre, BorderLayout.NORTH);
+		JPanel panelInter = new JPanel();
+		panelInter.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		creationPanel.add(panelInter, BorderLayout.CENTER);
+		JLabel groupeLabel = new JLabel("Groupe:", JLabel.CENTER);
+		panelInter.add(groupeLabel);
+		textField = new JTextField();
+		textField.setColumns(10);
+		panelInter.add(textField);
+		JLabel messageLabel = new JLabel("Message:", JLabel.CENTER);
+		panelInter.add(messageLabel);
+		JScrollPane scrollPane = new JScrollPane();
+		panelInter.add(scrollPane, BorderLayout.CENTER);
+		textMessage2 = new JTextArea();
+		textMessage2.setPreferredSize(new Dimension(150, 200));
+		scrollPane.setViewportView(textMessage2);
+		panelInter.add(textMessage2);
+		JButton creerFil = new JButton("CREER LE FIL");
+		creerFil.addActionListener(this::btnCreerFil);
+		panelInter.add(creerFil);
 		return creationPanel;
 	}
-	
 	private void btnCreerFil(ActionEvent event) {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		Message message = new Message(utilisateurSession.getIdentifiant(), utilisateurSession.getNom(), utilisateurSession.getPrenom(), dtf.format(LocalDateTime.now()), "Rouge", textMessage2.getText());
+		utilisateurSession.ajouterFilDiscussion(message, textField.getText());
+	}
+	private void btnAjouterFil(ActionEvent event) {
 		panel.removeAll();
 		panel.add(createPanel(), BorderLayout.CENTER);
 		panel.revalidate();
