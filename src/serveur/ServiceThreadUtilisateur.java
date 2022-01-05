@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -81,37 +84,45 @@ public class ServiceThreadUtilisateur extends Thread {
 
 	public void traiterDemande(String demande) {
 		switch (demande) {
-		case Communication.demandeCreationMsg:
-			Message msg = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
-			FilDiscussion filDiscu = Communication.gson.fromJson(Communication.lireMsg(is), FilDiscussion.class);
-			bdd.ajouterMessage(msg.getId_utilisateur(), filDiscu.getId_filDiscussion(),msg.getDate(), msg.getMessage());
-			break;
-		case Communication.demandeTousFils:
-			String id_utilisateur = Communication.lireMsg(is);
-			List<FilDiscussion> listeFils = new LinkedList<FilDiscussion>();
-			Map<Integer, String> mapTousFils = bdd.getListFil(id_utilisateur);
-			for (Map.Entry<Integer, String> pair : mapTousFils.entrySet()) {
-			    listeFils.add(new FilDiscussion(new Message(null, null, null, null, null, pair.getValue()),pair.getKey(), ""));
-			}
-			Communication.envoyerMsg(os, Communication.gson.toJson(listeFils));
-			break;
-		case Communication.demandeFil:
-			String id_filDiscussion = Communication.lireMsg(is);
-			String identifiant = Communication.lireMsg(is);
-			Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getFil(Integer.parseInt(id_filDiscussion), identifiant)));
-			break;
-		case Communication.demandeTousGroupes:
-			List<String> listeGroupe = bdd.getListGroupe();	
-			Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupe));
-			break;
-		case Communication.demandeGroupeUtilisateur:
-			String id_user = Communication.lireMsg(is);
-			List<String> listeGroupeUtilisateur = bdd.getListGroupeUtilisateur(id_user);	
-			Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupeUtilisateur));			
-			break;			
+			case Communication.demandeCreationMsg: 
+				Message msg = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
+				FilDiscussion filDiscu = Communication.gson.fromJson(Communication.lireMsg(is), FilDiscussion.class);
+				bdd.ajouterMessage(msg.getId_utilisateur(), filDiscu.getId_filDiscussion(),msg.getDate(), msg.getMessage());
+				break; 
+			case Communication.demandeCreationFil:
+				String id_utilisateur1 = Communication.lireMsg(is);
+				Message msg1 = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
+				String id_groupe1 = Communication.lireMsg(is);
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date date = new Date();
+				bdd.ajouterFil(id_utilisateur1, dateFormat.format(date).toString(), msg1.getMessage(), id_groupe1);
+				break;			
+			case Communication.demandeTousFils:
+				String id_utilisateur = Communication.lireMsg(is);
+				List<FilDiscussion> listeFils = new LinkedList<FilDiscussion>();
+				Map<Integer, String> mapTousFils = bdd.getListFil(id_utilisateur);
+				for (Map.Entry<Integer, String> pair : mapTousFils.entrySet()) {
+				    listeFils.add(new FilDiscussion(new Message(null, null, null, null, null, pair.getValue()),pair.getKey(), ""));
+				}
+				Communication.envoyerMsg(os, Communication.gson.toJson(listeFils));
+				break;
+			case Communication.demandeFil:
+				String id_filDiscussion = Communication.lireMsg(is);
+				String identifiant = Communication.lireMsg(is);
+				System.out.println("Aaaaaa:" + id_filDiscussion);
+				Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getFil(Integer.parseInt(id_filDiscussion), identifiant)));
+				break;
+			case Communication.demandeTousGroupes:
+				List<String> listeGroupe = bdd.getListGroupe();	
+				Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupe));
+				break;
+			case Communication.demandeGroupeUtilisateur:
+				String id_user = Communication.lireMsg(is);
+				List<String> listeGroupeUtilisateur = bdd.getListGroupeUtilisateur(id_user);	
+				Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupeUtilisateur));			
+				break;
 		}
 	}
-		
 
 	public void arreter() {
 		try {
