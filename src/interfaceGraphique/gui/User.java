@@ -14,13 +14,11 @@ import utilisateur.FilDiscussion;
 import utilisateur.Utilisateur;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
-import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.util.List;
 import java.util.ListIterator;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -37,7 +35,7 @@ public class User extends JFrame {
 	private Utilisateur utilisateurSession;
 	private FilDiscussion fd = null;
 	private JPanel panel;
-	private JTextArea textArea;
+	private JTextArea textMessage;
 	
 	public User(Utilisateur utilisateurSession) {
 		super("InterUniv");
@@ -60,7 +58,7 @@ public class User extends JFrame {
 		DefaultMutableTreeNode mainRoot = new DefaultMutableTreeNode("Fils de Discussion");
 		DefaultTreeModel treeModele = new DefaultTreeModel(mainRoot);
 		JTree tree = new JTree(treeModele);
-		tree.setShowsRootHandles(true);
+		tree.setShowsRootHandles(false);
 		utilisateurSession.actualiseGroupe();
 		List<String> listeGroupes = utilisateurSession.getGroupesUtilisateur();
 		for (int i = 0; i < listeGroupes.size(); i++) {
@@ -87,6 +85,7 @@ public class User extends JFrame {
 		this.addTreeLeftClicListener(tree);
 		
 		JButton btnNewButton = new JButton("Ajouter Fil de discussion");
+		btnNewButton.addActionListener(this::btnCreerFil);
 		panel_4.add(btnNewButton, BorderLayout.SOUTH);
 		
 		panel = new JPanel();
@@ -104,7 +103,6 @@ public class User extends JFrame {
 		JPanel sujetPanel = new JPanel();
 		sujetPanel.setBackground(Color.DARK_GRAY);
 		sujetPanel.setLayout(new BorderLayout(0, 0));
-		sujetPanel.add(initTitreSujet(node), BorderLayout.NORTH);
 		//panel d'envoy
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(Color.DARK_GRAY);
@@ -117,29 +115,23 @@ public class User extends JFrame {
 		panel_1.add(panel_3, BorderLayout.EAST);
 		
 		JButton envoyerMessage = new JButton("ENVOYER");
-		envoyerMessage.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+		envoyerMessage.addActionListener(this::btnEnvoyerMessageListener);
 		panel_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		panel_3.add(envoyerMessage);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		panel_1.add(scrollPane, BorderLayout.CENTER);
 		
-		JTextArea textArea = new JTextArea();
-		scrollPane.setViewportView(textArea);
-	
+		textMessage = new JTextArea();
+		scrollPane.setViewportView(textMessage);
 		fd = (FilDiscussion)node.getUserObject();
-		List<Message> lm = utilisateurSession.getFilDiscussion(fd.getId_filDiscussion()).getMessages();//fd.getMessages();
-		System.out.println(lm.size());
+		JPanel panel_2 = new JPanel();
+		sujetPanel.add(panel_2, BorderLayout.CENTER);
+		panel_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		List<Message> lm = utilisateurSession.getFilDiscussion(fd.getId_filDiscussion()).getMessages();
 		for(ListIterator<Message> iterareur = lm.listIterator(); iterareur.hasNext();) {	
 			Message message = iterareur.next();
-			
-			JPanel panel_2 = new JPanel();
-			sujetPanel.add(panel_2, BorderLayout.CENTER);
-			panel_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-			System.out.println(message.getPrenom());
+
 			JPanel panel_5 = new JPanel();
 			panel_5.setBackground(Color.GRAY);
 			panel_5.setPreferredSize(new Dimension(480, 150));
@@ -164,15 +156,6 @@ public class User extends JFrame {
 		return sujetPanel;
 	}
 	
-	private JLabel initTitreSujet(DefaultMutableTreeNode node) {
-		FilDiscussion fd = (FilDiscussion) node.getUserObject();
-		JLabel titreSujet = new JLabel(fd.toString());
-		titreSujet.setForeground(Color.WHITE);
-		titreSujet.setHorizontalAlignment(SwingConstants.CENTER);
-		titreSujet.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 22));
-		return titreSujet;
-	}
-	
 	private void addTreeLeftClicListener(final JTree tree) {
 		MouseListener ml = new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -186,7 +169,6 @@ public class User extends JFrame {
 						//Object obj = node.getUserObject();
 						Class<FilDiscussion> c = FilDiscussion.class;
 						boolean b = c.isInstance(node.getUserObject());
-						System.out.println(b);
 						if (b) {
 							JPanel sujetPanel = initSujetPanel(node);
 							panel.removeAll();
@@ -198,11 +180,22 @@ public class User extends JFrame {
 			}};
 		tree.addMouseListener(ml);
 	}
+	private JPanel createPanel() {
+		JPanel creationPanel = new JPanel();
+		creationPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		return creationPanel;
+	}
+	
+	private void btnCreerFil(ActionEvent event) {
+		panel.removeAll();
+		panel.add(createPanel(), BorderLayout.CENTER);
+		panel.revalidate();
+	}
 	
 	private void btnEnvoyerMessageListener(ActionEvent event) {
-		utilisateur.Message message;
+		Message message;
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		message = new utilisateur.Message(utilisateurSession.getIdentifiant(), utilisateurSession.getNom(), utilisateurSession.getPrenom(), dtf.format(LocalDateTime.now()), "new", textArea.getText());
+		message = new Message(utilisateurSession.getIdentifiant(), utilisateurSession.getNom(), utilisateurSession.getPrenom(), dtf.format(LocalDateTime.now()), "new", textMessage.getText());
 		utilisateurSession.envoyerMessage(message, fd);
 	}
 }
