@@ -10,7 +10,7 @@ public class Communication {
 
 	public static Gson gson = new Gson();
 
-	public static final String demandeCreationMsg = "Demande creation message",
+	public static final String demandeCreationMsg = "Demande creation message", demandeCreationFil = "Demande creation fil",
 			demandeTousFils = "Demande tous les fils", demandeFil = "Demande get fil",
 			demandeTousGroupes = "Demande tous les groupes", demandeGroupeUtilisateur = "Demande groupe utilisateur";
 
