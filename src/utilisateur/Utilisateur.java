@@ -108,6 +108,25 @@ public class Utilisateur {
 		return 0;
 	}
 	
+	/**
+	 * Ajoute un fil de discussion
+	 * @param message
+	 * @param filDiscussion
+	 * @return 0 si succès 1 sinon
+	 */
+	
+	public int ajouterFilDiscussion(Message message, String id_groupe) {
+		if (Communication.envoyerMsg(os, Communication.demandeCreationFil) != 0)
+			return 1;
+		if (Communication.envoyerMsg(os, Communication.gson.toJson(identifiant)) != 0)
+			return 1;			
+		if (Communication.envoyerMsg(os, Communication.gson.toJson(message)) != 0)
+			return 1;	
+		if (Communication.envoyerMsg(os, Communication.gson.toJson(id_groupe)) != 0)
+			return 1;			
+		return 0;
+	}	
+	
 	
 	/**
 	 * Récupère tous les fils de discussion
@@ -170,6 +189,7 @@ public class Utilisateur {
 			return null;
 		return Communication.gson.fromJson(res, new TypeToken<List<String>>(){}.getType());
 	}
+
 	
 	public void actualiseGroupe() {
 		List<String> groupes = receiveAllGroupe();
