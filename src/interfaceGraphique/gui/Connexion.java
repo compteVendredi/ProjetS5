@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
+import interfaceGraphique.gui.user.User;
 import utilisateur.Groupe;
 import utilisateur.Utilisateur;
 import utilitaire.HashUtil;
@@ -168,7 +169,8 @@ public class Connexion extends JFrame {
 		password = new String(tempPassword);
 		utilisateur = new Utilisateur(userName, HashUtil.applySha256(password), "", "");
 		if (utilisateur.seConnecter("localhost", 9999) == 0) {
-			User user = new User(utilisateur);
+			User.setCurrentUser(utilisateur);
+			User user = new User();
 			user.setVisible(true);
 			Connexion.this.dispose();
 		}
