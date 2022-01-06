@@ -93,9 +93,7 @@ public class ServiceThreadUtilisateur extends Thread {
 				String id_utilisateur1 = Communication.lireMsg(is);
 				Message msg1 = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
 				String id_groupe1 = Communication.lireMsg(is);
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date date = new Date();
-				bdd.ajouterFil(id_utilisateur1, dateFormat.format(date).toString(), msg1.getMessage(), id_groupe1);
+				bdd.ajouterFil(id_utilisateur1, msg1.getDate(), msg1.getMessage(), id_groupe1);
 				break;			
 			case Communication.demandeTousFils:
 				String id_utilisateur = Communication.lireMsg(is);
