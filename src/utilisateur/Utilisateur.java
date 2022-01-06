@@ -118,12 +118,12 @@ public class Utilisateur {
 	public int ajouterFilDiscussion(Message message, String id_groupe) {
 		if (Communication.envoyerMsg(os, Communication.demandeCreationFil) != 0)
 			return 1;
-		if (Communication.envoyerMsg(os, Communication.gson.toJson(identifiant)) != 0)
+		if (Communication.envoyerMsg(os, identifiant) != 0)
 			return 1;			
 		if (Communication.envoyerMsg(os, Communication.gson.toJson(message)) != 0)
 			return 1;	
-		if (Communication.envoyerMsg(os, Communication.gson.toJson(id_groupe)) != 0)
-			return 1;			
+		if (Communication.envoyerMsg(os, id_groupe) != 0)
+			return 1;	
 		return 0;
 	}	
 	
