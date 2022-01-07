@@ -176,15 +176,6 @@ public class ServiceUtilisateur extends Utilisateur {
 	}
 	
 	/**
-	 * Ajoute un groupe
-	 * @param groupe
-	 */
-	public void ajouterGroupe(Groupe groupe) {
-		listeGroupes.add(groupe);
-		groupe.ajouterUtilisateur(this);
-	}
-	
-	/**
 	 * Récupère la liste des groupes de l'utilisateur
 	 * @return les groupes de l'utilisateur ou null si erreur
 	 */
