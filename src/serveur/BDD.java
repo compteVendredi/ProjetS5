@@ -11,9 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import utilisateur.FilDiscussion;
-import utilisateur.Message;
-import utilisateur.Utilisateur;
+import commun.FilDiscussionUtilisateur;
+import commun.Message;
+import commun.Utilisateur;
+import utilitaire.Communication;
 
 public class BDD {
 	private String login;
@@ -38,10 +39,10 @@ public class BDD {
 			con = DriverManager.getConnection(url, login, motDePasse);
 			stmt = con.createStatement();
 		} catch (SQLTimeoutException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql timeout exception : " + e.toString());
 			return 1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return 2;
 		}
 		return 0;
@@ -69,7 +70,7 @@ public class BDD {
 		try {
 			resultSet = stmt.executeQuery(requete);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 		return resultSet;
@@ -86,7 +87,7 @@ public class BDD {
 		try {
 			stmt.executeUpdate(requete);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return 1;
 		}
 		return 0;
@@ -105,7 +106,7 @@ public class BDD {
 			resultSet = stmt.getGeneratedKeys();
 			return resultSet;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 	}
@@ -120,7 +121,7 @@ public class BDD {
 			} else
 				return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return false;
 		}
 	}
@@ -136,7 +137,7 @@ public class BDD {
 			}
 			return liste;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 		
@@ -149,7 +150,7 @@ public class BDD {
 			resultSet.next();
 			return resultSet.getString("motDePasse");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 	}
@@ -158,7 +159,7 @@ public class BDD {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		List<Integer> liste = new ArrayList<>();
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT id_filDiscussion FROM Estdans WHERE id_utilisateur='" + id_utilisateur + "'");
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM EstDans WHERE id_utilisateur='" + id_utilisateur + "'");
 		try {
 			while (resultSet.next()) {
 				liste.add(resultSet.getInt("id_filDiscussion"));
@@ -166,13 +167,13 @@ public class BDD {
 			for (Integer id_fil : liste) {
 				requeteEcriture("INSERT INTO Recu VALUES ("+ id_fil + ",'"+ id_utilisateur +"')");
 				actualiseStatutRecu(id_fil);
-				resultSet = requeteLecture("SELECT premierMessage FROM Fildiscussion WHERE id_filDiscussion="+ id_fil);
+				resultSet = requeteLecture("SELECT premierMessage FROM FilDiscussion WHERE id_filDiscussion="+ id_fil);
 				resultSet.next();
 				map.put(id_fil, resultSet.getString("premierMessage"));	
 			}
 			return map;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 	}
@@ -183,33 +184,33 @@ public class BDD {
 		try {
 			resultSet.next();
 			int nb_recu = resultSet.getInt("total");
-			resultSet = requeteLecture("SELECT nb_utilisateur FROM fildiscussion WHERE id_fildiscussion =" + id_filDiscussion);
+			resultSet = requeteLecture("SELECT nb_utilisateur FROM FilDiscussion WHERE id_fildiscussion =" + id_filDiscussion);
 			resultSet.next();
 			if (nb_recu >= resultSet.getInt("nb_utilisateur")) {
-				requeteEcriture("UPDATE message SET statut = 'Orange' WHERE id_filDiscussion = " + id_filDiscussion + " AND statut = 'Rouge'");
+				requeteEcriture("UPDATE Message SET statut = 'Orange' WHERE id_filDiscussion = " + id_filDiscussion + " AND statut = 'Rouge'");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 		}
 	}
 	
-	public FilDiscussion getFil(int id_filDiscussion, String id_utilisateur) {
+	public FilDiscussionUtilisateur getFil(int id_filDiscussion, String id_utilisateur) {
 		ResultSet resultSet = null;
 		List<Integer> list = new ArrayList<>();
 		Message message;
-		FilDiscussion fil;
+		FilDiscussionUtilisateur fil;
 		// Select le groupe de l'utilisateur 
 		resultSet = requeteLecture("SELECT id_groupe FROM FilDiscussion WHERE id_filDiscussion=" + id_filDiscussion);
 		try {
 			resultSet.next();
 			String id_groupe = resultSet.getString("id_groupe");
 			// Select tout les messages + nom, prenom de l'utilisateur du message
-			resultSet = requeteLecture("SELECT message.*, utilisateur.nom, utilisateur.prenom FROM message INNER JOIN utilisateur WHERE message.id_utilisateur = utilisateur.id_utilisateur AND message.id_filDiscussion = " + id_filDiscussion + " ORDER BY message.date_emission");
+			resultSet = requeteLecture("SELECT Message.*, Utilisateur.nom, Utilisateur.prenom FROM Message INNER JOIN Utilisateur WHERE Message.id_utilisateur = Utilisateur.id_utilisateur AND Message.id_filDiscussion = " + id_filDiscussion + " ORDER BY Message.date_emission");
 			resultSet.next();
 			// Premier message + creation du fil
 			message = new Message(resultSet.getString("id_utilisateur"), resultSet.getString("nom"), resultSet.getString("prenom"), resultSet.getString("date_emission"), resultSet.getString("statut"), resultSet.getString("contenu"));
 			list.add(resultSet.getInt("id_message"));
-			fil = new FilDiscussion(message, id_filDiscussion, id_groupe,1);
+			fil = new FilDiscussionUtilisateur(message, id_filDiscussion, id_groupe,1);
 			// Ajout des message dans le fil
 			while(resultSet.next()) {
 				message = new Message(resultSet.getString("id_utilisateur"), resultSet.getString("nom"), resultSet.getString("prenom"), resultSet.getString("date_emission"), resultSet.getString("statut"), resultSet.getString("contenu"));
@@ -218,29 +219,29 @@ public class BDD {
 			}
 			// Insert lu pour l'utilisateur pour chaque message 
 			for (Integer id_message : list) {
-				requeteEcriture("INSERT INTO lu VALUES ("+ id_message +",'" + id_utilisateur + "')");
+				requeteEcriture("INSERT INTO Lu VALUES ("+ id_message +",'" + id_utilisateur + "')");
 				actualiseStatutlu(id_message, id_filDiscussion);
 			}
 			return fil;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 	}
 	
 	private void actualiseStatutlu(int id_message, int id_filDiscussion) {
 		ResultSet resultSet = null;
-		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM lu WHERE id_message =" + id_message);
+		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM Lu WHERE id_message =" + id_message);
 		try {
 			resultSet.next();
 			int nb_lu = resultSet.getInt("total");
-			resultSet = requeteLecture("SELECT nb_utilisateur FROM fildiscussion WHERE id_fildiscussion =" + id_filDiscussion);
+			resultSet = requeteLecture("SELECT nb_utilisateur FROM FilDiscussion WHERE id_fildiscussion =" + id_filDiscussion);
 			resultSet.next();
 			if (nb_lu >= resultSet.getInt("nb_utilisateur")) {
-				requeteEcriture("UPDATE message SET statut = 'Vert' WHERE id_filDiscussion = " + id_filDiscussion + " AND statut = 'Orange'");
+				requeteEcriture("UPDATE Message SET statut = 'Vert' WHERE id_filDiscussion = " + id_filDiscussion + " AND statut = 'Orange'");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 		}
 	}
 
@@ -253,7 +254,7 @@ public class BDD {
 			user = new Utilisateur(id_utilisateur, resultSet.getString("motDePasse"),resultSet.getString("nom"), resultSet.getString("prenom"));
 			return user;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 	}
@@ -268,7 +269,7 @@ public class BDD {
 			}
 			return liste;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 	}
@@ -283,35 +284,35 @@ public class BDD {
 			}
 			return liste;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 	}	
 
-	public FilDiscussion ajouterFil(String id_utilisateur, String date, String message, String id_groupe) {
+	public FilDiscussionUtilisateur ajouterFil(String id_utilisateur, String date, String message, String id_groupe) {
 		ResultSet resultSet = null;
 		int num;
 		int nb_utilisateur;
 		int estDansGroupe;
 		// Check si l'utilisateur est dans le groupe
-		resultSet = requeteLecture("SELECT COUNT(id_groupe) AS total FROM appartenance WHERE id_utilisateur = '" + id_utilisateur + "' AND id_groupe = '" + id_groupe + "'"); 
+		resultSet = requeteLecture("SELECT COUNT(id_groupe) AS total FROM Appartenance WHERE id_utilisateur = '" + id_utilisateur + "' AND id_groupe = '" + id_groupe + "'"); 
 		List<String> liste = new ArrayList<>();
 		try {
 			resultSet.next();
 			estDansGroupe = resultSet.getInt("total");
-			resultSet = requeteLecture("SELECT nb_utilisateur FROM groupe WHERE id_groupe = '"+ id_groupe +"'"); 
+			resultSet = requeteLecture("SELECT nb_utilisateur FROM Groupe WHERE id_groupe = '"+ id_groupe +"'"); 
 			resultSet.next();
 			nb_utilisateur = resultSet.getInt("nb_utilisateur");
 			if (estDansGroupe == 0) {
 				nb_utilisateur++;
 			}
 			// Insert fil + message
-			resultSet = requeteEcritureReturn("INSERT INTO Fildiscussion VALUES (NULL, '" + id_groupe + "', '" + message + "',"+ nb_utilisateur +"); SELECT LAST_INSERT_ID() AS return"); 
+			resultSet = requeteEcritureReturn("INSERT INTO FilDiscussion VALUES (NULL, '" + id_groupe + "', '" + message + "',"+ nb_utilisateur +"); SELECT LAST_INSERT_ID() AS return"); 
 			resultSet.next();
 			num = resultSet.getInt("return");
 			requeteEcriture("INSERT INTO Message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"+ id_utilisateur + "'," + num + ")");
 			// Ajoute les utilisateurs dans apparenance 
-			resultSet = requeteLecture("SELECT id_utilisateur FROM appartenance WHERE id_groupe = '"+ id_groupe +"'");
+			resultSet = requeteLecture("SELECT id_utilisateur FROM Appartenance WHERE id_groupe = '"+ id_groupe +"'");
 			while(resultSet.next()) {
 				liste.add(resultSet.getString("id_utilisateur"));
 			}
@@ -325,7 +326,7 @@ public class BDD {
 			requeteEcriture("INSERT INTO Recu VALUES ("+ num + ",'"+ id_utilisateur +"')");
 			return this.getFil(num, id_utilisateur);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return null;
 		}
 	}
@@ -340,10 +341,10 @@ public class BDD {
 			resultSet = requeteLecture("INSERT INTO Message VALUES (NULL,'" + date + "','Rouge','" + message + "','"
 					+ id_utilisateur + "'," + id_fil + "); SELECT LAST_INSERT_ID() AS return");
 			resultSet.next();
-			requeteEcriture("INSERT INTO lu VALUES ("+ resultSet.getInt("return") +",'" + id_utilisateur + "')");
+			requeteEcriture("INSERT INTO Lu VALUES ("+ resultSet.getInt("return") +",'" + id_utilisateur + "')");
 			return 0;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return 1;
 		}
 		
