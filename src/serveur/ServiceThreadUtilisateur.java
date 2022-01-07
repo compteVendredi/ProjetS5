@@ -61,7 +61,6 @@ public class ServiceThreadUtilisateur extends Thread {
 	
 	/**
 	 * Etabli la connexion avec l'utilisateur (sur le socket)
-	 * selon le protocole défini (voir la documentation)
 	 * @return 0 si réussi 1 si mauvais identifiant 2 si mauvais mot de passe 3 sinon
 	 */
 	
