@@ -7,9 +7,7 @@ import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import utilisateur.FilDiscussion;
 import utilisateur.Message;
@@ -371,7 +369,7 @@ public class BDD {
 	public int supprimerUser(String id_user) {
 		ResultSet resultSet = null;
 		List<String> listId_groupe = new ArrayList<>();
-		List<String> list = new ArrayList<>();
+		List<Integer> listId_fil = new ArrayList<>();
 		resultSet = requeteLecture("SELECT id_groupe FROM `appartenance` WHERE id_utilisateur = '"+id_user+"'");
 		try {
 			while (resultSet.next()) {
@@ -380,26 +378,63 @@ public class BDD {
 			for (String id_groupe : listId_groupe) {
 				requeteEcriture("Update groupe Set nb_utilisateur = nb_utilisateur - 1 Where id_groupe ='" + id_groupe +"'");
 			}
-			resultSet = requeteLecture("SELECT id_groupe FROM `appartenance` WHERE id_utilisateur = '"+id_user+"'");
+			resultSet = requeteLecture("SELECT id_filDiscussion FROM estdans WHERE id_utilisateur = '"+id_user+"'");
+			while (resultSet.next()) {
+				listId_fil.add(resultSet.getInt("id_filDiscussion"));
+			}
+			for (Integer id_fil : listId_fil) {
+				resultSet = requeteLecture("SELECT COUNT(id_message) AS total FROM message WHERE id_utilisateur = '"+id_user+"' AND id_filDiscussion = "+ id_fil);
+				resultSet.next();
+				int nb_message = resultSet.getInt("total");
+				requeteEcriture("Update fildiscussion Set nb_message = nb_message - "+nb_message+" Where id_filDiscussion = "+ id_fil);
+				requeteEcriture("Update fildiscussion Set nb_utilisateur = nb_utilisateur - 1 Where id_filDiscussion = " + id_fil);
+			}
+			return requeteEcriture("DELETE FROM utilisateur WHERE id_utilisateur='"+id_user+"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 1;
-		}
-		return 0;
+		}	
 	}
 	
+	public int supprimerMessage(int id_message) {
+		ResultSet resultSet = null;
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM message WHERE id_message = "+ id_message);
+		try {
+			resultSet.next();
+			int id_fil = resultSet.getInt("id_filDiscussion");
+			requeteEcriture("Update fildiscussion Set nb_message = nb_message - 1 Where id_filDiscussion = "+ id_fil);
+			return requeteEcriture("DELETE FROM message WHERE id_message= " + id_message);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 1;
+		}	
+	}
 	
+	public int supprimerGroupe(String id_groupe) {
+		return requeteEcriture("DELETE FROM groupe WHERE id_groupe='"+ id_groupe+"' ");
+	}
 	
-	/*
-	 * -ajouterUser(String id_user, String hashMDP, String Nom, String prenom) : int (0 true, 1 error, 2 existe deja)
-	 * -ajouterGroupe(String role) : int (0 true, 1 error)
-	 * 
-	 * supUser(String ID_user) : (0 true, 1 error)
-	 * supGroupe(Int ID_groupe) : (0 true, 1 error)
-	 * supMessage(Int ID_message) : List id_user
-	 * supFil(Int ID_fil) :(0 true, 1 error)
-	 * 
-	 * inserGroupe(String Id_user, Int ID_groupe) : (0 true, 1 error)
-	 */
-
+	public int supprimerFil(int id_fil) {
+		requeteEcriture("DELETE FROM message WHERE id_filDiscussion= " + id_fil);
+		return requeteEcriture("DELETE FROM fildiscussion WHERE id_filDiscussion= " + id_fil);
+	}
+	
+	public int insertGroupe(String id_user, String id_groupe) {
+		ResultSet resultSet = null;
+		List<Integer> listId_fil = new ArrayList<>();
+		resultSet = requeteLecture("SELECT id_fildiscussion FROM fildiscussion WHERE id_groupe = '"+id_groupe+"'");
+		try {
+			while(resultSet.next()) {
+				listId_fil.add(resultSet.getInt("id_fildiscussion"));
+			}
+			for (Integer id_fil : listId_fil) {
+				requeteEcriture("INSERT INTO estdans VALUES ('"+id_user+"', "+id_fil+")");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 1;
+		}	
+		requeteEcriture("INSERT INTO Appartenance VALUES ('"+id_groupe+"', '"+id_user+"')");
+		return requeteEcriture("Update fildiscussion Set nb_utilisateur = nb_utilisateur + 1 Where id_groupe = '"+id_groupe+"'");
+	}	
 }
