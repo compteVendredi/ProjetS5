@@ -72,8 +72,10 @@ public class Serveur {
 			serviceServeur.arreter();
 
 		try {
-			listener.close();
-			serviceServeur.join();
+			if(listener != null)
+				listener.close();
+			if(serviceServeur != null)
+				serviceServeur.join();
 		} catch (InterruptedException e) {
 			Communication.log("[ERREUR] interruption " + e.toString());
 			return 1;
