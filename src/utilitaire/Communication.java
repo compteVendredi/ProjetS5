@@ -3,6 +3,8 @@ package utilitaire;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.google.gson.Gson;
 
@@ -15,7 +17,9 @@ public class Communication {
 			demandeTousGroupes = "Demande tous les groupes", demandeGroupeUtilisateur = "Demande groupe utilisateur";
 
 	public static void log(String msg) {
-		System.out.println(msg);
+	    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");  
+	    Date date = new Date();  		
+		System.out.println(formatter.format(date) + " : " + msg);
 	}
 
 	public static int envoyerMsg(BufferedWriter os, String msg) {

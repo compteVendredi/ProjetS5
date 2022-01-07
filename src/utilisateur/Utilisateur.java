@@ -14,6 +14,11 @@ import com.google.gson.reflect.TypeToken;
 
 import utilitaire.Communication;
 
+/**
+ * Représente un utilisateur et offre les services 
+ * pour l'interface utilisateur
+ */
+
 public class Utilisateur {
 	private String identifiant;
 	private String motDePasse;
@@ -47,14 +52,16 @@ public class Utilisateur {
 			is = new BufferedReader(new InputStreamReader(socketServeur.getInputStream()));
 
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] hôte inconnu socket : " + e.toString());
 			return 3;
 		} catch (IOException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] IO des flux : " + e.toString());
 			return 3;
 		}
-		if (Communication.envoyerMsg(os, identifiant + " " + motDePasse) != 0)
+		if (Communication.envoyerMsg(os, identifiant + " " + motDePasse) != 0) {
+			Communication.log("[ERREUR] Impossible d'écrire sur le flux de sortie");
 			return 3;
+		}
 		String res = Communication.lireMsg(is);
 		if (!res.equals("OK")) {
 			String[] parts = res.split(" ");
@@ -82,9 +89,12 @@ public class Utilisateur {
 			if (Communication.envoyerMsg(os, "QUIT") != 0)
 				return 1;
 
-			os.close();
-			is.close();
-			socketServeur.close();
+			if(os != null)
+				os.close();
+			if(is != null)
+				is.close();
+			if(socketServeur != null)
+				socketServeur.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return 1;
@@ -162,10 +172,19 @@ public class Utilisateur {
 		return Communication.gson.fromJson(res, FilDiscussion.class);
 	}
 	
+	/**
+	 * Ajoute un groupe
+	 * @param groupe
+	 */
 	public void ajouterGroupe(Groupe groupe) {
 		listeGroupes.add(groupe);
 		groupe.ajouterUtilisateur(this);
 	}
+	
+	/**
+	 * Récupère la liste des groupes de l'utilisateur
+	 * @return les groupes de l'utilisateur
+	 */
 	
 	public List<String> getGroupesUtilisateur() {
 		if (Communication.envoyerMsg(os, Communication.demandeGroupeUtilisateur) != 0)
@@ -190,6 +209,9 @@ public class Utilisateur {
 		return Communication.gson.fromJson(res, new TypeToken<List<String>>(){}.getType());
 	}
 
+	/**
+	 * Actualise les groupes
+	 */
 	
 	public void actualiseGroupe() {
 		List<String> groupes = receiveAllGroupe();

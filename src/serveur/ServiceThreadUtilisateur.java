@@ -17,85 +17,145 @@ import utilisateur.FilDiscussion;
 import utilisateur.Message;
 import utilitaire.Communication;
 
+/**
+ * Thread qui offre les services pour un utilsateur 
+ * (se connectant au serveur)
+ *
+ */
+
 public class ServiceThreadUtilisateur extends Thread {
 
-	private int clientNumber;
-	private Socket socketUtilisateur;
+	private int numeroClient;
 	private BDD bdd;
 	private boolean estActif = true;
 	BufferedReader is;
 	BufferedWriter os;
+	
+	/**
+	 * Redéfinition locale d'une méthode de log
+	 */
+	
+	private void log(String msg) {
+		Communication.log("Service thread n°" + numeroClient + " : " + msg);
+	}	
 
-	public ServiceThreadUtilisateur(Socket socketUtilisateur, int clientNumber, BDD bdd) {
-		this.clientNumber = clientNumber;
-		this.socketUtilisateur = socketUtilisateur;
+	/**
+	 * Créer un service thread utilisateur
+	 * @param socketUtilisateur
+	 * @param numeroClient
+	 * @param bdd
+	 */
+	
+	public ServiceThreadUtilisateur(Socket socketUtilisateur, int numeroClient, BDD bdd) {
+		this.numeroClient = numeroClient;
 		this.bdd = bdd;
-	}
-
-	@Override
-	public void run() {
-
 		try {
 			is = new BufferedReader(new InputStreamReader(socketUtilisateur.getInputStream()));
 			os = new BufferedWriter(new OutputStreamWriter(socketUtilisateur.getOutputStream()));
-			String line;
-
-			line = is.readLine();
-			String[] parts = line.split(" ");
-			boolean estExistant = false, estMotDePasseCorrect = false;
-			String identifiant = "";
-			if(parts.length == 2) {
-				identifiant = parts[0];
-				String motDePasse = parts[1];
-				estExistant = bdd.existeUser(identifiant);
-				if (estExistant)
-					estMotDePasseCorrect = bdd.getHash(identifiant).equals(motDePasse);
-			}
-
-			if (!estExistant || !estMotDePasseCorrect) {
-				os.write(estExistant + " " + estMotDePasseCorrect);
-				os.newLine();
-				os.flush();
-				Communication.log("Fin connexion n°" + clientNumber + " car existe = " + estExistant
-						+ " ou mot de passe correct = " + estMotDePasseCorrect + " refusé");
-			} else {
-				Communication.envoyerMsg(os, "OK");
-				Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getUtilisateur(identifiant)));
-				while (estActif) {
-					// Read data to the server (sent from client).
-					line = is.readLine();
-
-					// If users send QUIT (To end conversation).
-					if (line.equals("QUIT")) {
-						Communication.log("QUIT reçu");
-						break;
-					} 
-					System.out.println("Début service serveur reçu : " + line);
-					traiterDemande(line);
-					System.out.println("Fin service");
-				}
-				Communication.log("Fin connexion n°" + clientNumber);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		}
+		catch(Exception e) {
+			log("Impossible d'établir un flux sur le socket utilisateur : " + e.toString());
 		}
 	}
+	
+	
+	/**
+	 * Etabli la connexion avec l'utilisateur (sur le socket)
+	 * selon le protocole défini (voir la documentation)
+	 * @return 0 si réussi 1 si mauvais identifiant 2 si mauvais mot de passe 3 sinon
+	 */
+	
+	private int etablirConnexion() {
+		String line;
+		try {
+			line = is.readLine();
+		} catch (IOException e) {
+			log("[ERREUR] Impossible de lire le flux sur le socket utilisateur : " + e.toString());
+			return 3;
+		}
+		
+		String[] parts = line.split(" ");
+		if(parts.length != 2) {
+			log("[ERREUR] Mauvaises données reçues");
+			return 3;
+		}
+		
+		String identifiant = parts[0];
+		String motDePasse = parts[1];
+		
+		boolean estExistant = bdd.existeUser(identifiant);
+		boolean estMotDePasseCorrect = false;
+		if (estExistant)
+			estMotDePasseCorrect = bdd.getHash(identifiant).equals(motDePasse);
 
-	public void traiterDemande(String demande) {
+		if (!(estExistant && estMotDePasseCorrect)) {
+			Communication.envoyerMsg(os, "Non");
+			if(estExistant)
+				return 2;
+			else
+				return 1;
+		} 
+		
+		Communication.envoyerMsg(os, "OK");
+		Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getUtilisateur(identifiant)));
+		return 0;
+	}
+	
+	/**
+	 * Code exécuté par le thread
+	 */
+	
+	public void run() {
+		String line = null;
+
+		int retour = etablirConnexion();
+		if(retour == 1) 
+			log("[ERREUR] Impossible d'établir la connexion (mauvais identifiant)");
+		else if(retour == 2)
+			log("[ERREUR] Impossible d'établir la connexion (mauvais mot de passe)");
+		else
+			while (estActif) {
+				try {
+					line = is.readLine();
+				} catch (IOException e) {
+					log("[ERREUR] IO sur la lecture du flux : " + e.toString());
+				}
+				if (line.equals("QUIT")) {
+					Communication.log("QUIT reçu");
+					estActif = false;
+				}
+				else {
+					if(traiterDemande(line) != 0)
+						log("[ERREUR] Impossible de traiter la demande du client");						
+				}
+
+			}
+		log("Fin connexion du client n°" + numeroClient);
+	}
+
+	/**
+	 * Permet de traiter les demandes du client
+	 * @param demande
+	 * @return 0 succès 1 sinon
+	 */
+	
+	public int traiterDemande(String demande) {
+		log("Début du traitement de la demande : " + demande);
 		switch (demande) {
-			case Communication.demandeCreationMsg: 
+			case Communication.demandeCreationMsg:{
 				Message msg = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
 				FilDiscussion filDiscu = Communication.gson.fromJson(Communication.lireMsg(is), FilDiscussion.class);
-				bdd.ajouterMessage(msg.getId_utilisateur(), filDiscu.getId_filDiscussion(),msg.getDate(), msg.getMessage());
-				break; 
-			case Communication.demandeCreationFil:
-				String id_utilisateur1 = Communication.lireMsg(is);
-				Message msg1 = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
-				String id_groupe1 = Communication.lireMsg(is);
-				bdd.ajouterFil(id_utilisateur1, msg1.getDate(), msg1.getMessage(), id_groupe1);
-				break;			
-			case Communication.demandeTousFils:
+				if(bdd.ajouterMessage(msg.getId_utilisateur(), filDiscu.getId_filDiscussion(),msg.getDate(), msg.getMessage()) != 0)
+					return 1;
+				break;}
+			case Communication.demandeCreationFil:{
+				String id_utilisateur = Communication.lireMsg(is);
+				Message msg = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
+				String id_groupe = Communication.lireMsg(is);
+				if(bdd.ajouterFil(id_utilisateur, msg.getDate(), msg.getMessage(), id_groupe) == null)
+					return 1;
+				break;}
+			case Communication.demandeTousFils:{
 				String id_utilisateur = Communication.lireMsg(is);
 				List<FilDiscussion> listeFils = new LinkedList<FilDiscussion>();
 				Map<Integer, String> mapTousFils = bdd.getListFil(id_utilisateur);
@@ -103,31 +163,39 @@ public class ServiceThreadUtilisateur extends Thread {
 				    listeFils.add(new FilDiscussion(new Message(null, null, null, null, null, pair.getValue()),pair.getKey(), ""));
 				}
 				Communication.envoyerMsg(os, Communication.gson.toJson(listeFils));
-				break;
-			case Communication.demandeFil:
+				break;}
+			case Communication.demandeFil:{
 				String id_filDiscussion = Communication.lireMsg(is);
 				String identifiant = Communication.lireMsg(is);
-				System.out.println("Aaaaaa:" + id_filDiscussion);
-				Communication.envoyerMsg(os, Communication.gson.toJson(bdd.getFil(Integer.parseInt(id_filDiscussion), identifiant)));
-				break;
-			case Communication.demandeTousGroupes:
+				FilDiscussion filDiscu = bdd.getFil(Integer.parseInt(id_filDiscussion), identifiant);
+				Communication.envoyerMsg(os, Communication.gson.toJson(filDiscu));
+				break;}
+			case Communication.demandeTousGroupes:{
 				List<String> listeGroupe = bdd.getListGroupe();	
 				Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupe));
-				break;
-			case Communication.demandeGroupeUtilisateur:
+				break;}
+			case Communication.demandeGroupeUtilisateur:{
 				String id_user = Communication.lireMsg(is);
 				List<String> listeGroupeUtilisateur = bdd.getListGroupeUtilisateur(id_user);	
 				Communication.envoyerMsg(os, Communication.gson.toJson(listeGroupeUtilisateur));			
-				break;
+				break;}
+			default:
+				return 1;
 		}
+		log("Fin du traitement (succès)");
+		return 0;
 	}
 
+	/**
+	 * Permet l'arrêt du thread service utilisateur
+	 */
+	
 	public void arreter() {
 		try {
 			is.close();
 			os.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log("[ERREUR] Impossible de fermer les flux du service utilisateur : " + e.toString());
 		}
 		estActif = false;
 	}
