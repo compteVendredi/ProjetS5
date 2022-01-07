@@ -96,7 +96,7 @@ public class Utilisateur {
 			if(socketServeur != null)
 				socketServeur.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Communication.log("[ERREUR] IO flux utilisateur " + e.toString());
 			return 1;
 		}
 		return 0;
