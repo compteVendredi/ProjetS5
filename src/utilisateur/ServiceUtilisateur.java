@@ -23,9 +23,9 @@ import utilitaire.Communication;
  */
 
 public class ServiceUtilisateur extends Utilisateur {
-	transient Socket socketServeur = null;
-	transient BufferedWriter os = null;
-	transient BufferedReader is = null;
+	private Socket socketServeur = null;
+	private BufferedWriter os = null;
+	private BufferedReader is = null;
 	
 	/**
 	 * Créer un service utilisateur
