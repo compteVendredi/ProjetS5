@@ -370,19 +370,21 @@ public class BDD {
 	
 	public int supprimerUser(String id_user) {
 		ResultSet resultSet = null;
+		List<String> listId_groupe = new ArrayList<>();
 		List<String> list = new ArrayList<>();
 		resultSet = requeteLecture("SELECT id_groupe FROM `appartenance` WHERE id_utilisateur = '"+id_user+"'");
 		try {
 			while (resultSet.next()) {
-				list.add(resultSet.getString("id_groupe"));
+				listId_groupe.add(resultSet.getString("id_groupe"));
 			}
-			for (String id_groupe : list) {
+			for (String id_groupe : listId_groupe) {
 				requeteEcriture("Update groupe Set nb_utilisateur = nb_utilisateur - 1 Where id_groupe ='" + id_groupe +"'");
 			}
-			
+			resultSet = requeteLecture("SELECT id_groupe FROM `appartenance` WHERE id_utilisateur = '"+id_user+"'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return 1;
+		}
 		return 0;
 	}
 	
