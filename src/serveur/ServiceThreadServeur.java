@@ -30,7 +30,6 @@ public class ServiceThreadServeur extends Thread {
 	public ServiceThreadServeur(ServerSocket listener, BDD bdd) {
 		this.listener = listener;
 		this.bdd = bdd;
-		this.utilisateurs = utilisateurs;
 	}
 
 	/**

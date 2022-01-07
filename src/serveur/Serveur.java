@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Set;
 
-import utilisateur.FilDiscussion;
-import utilisateur.Message;
-import utilisateur.Utilisateur;
+import commun.FilDiscussion;
+import commun.Message;
+import utilisateur.ServiceUtilisateur;
 import utilitaire.Communication;
 
 /**
@@ -25,7 +25,7 @@ public class Serveur {
 	/**
 	 * Créer un Serveur
 	 * 
-	 * @param port (<= 1023 si non root)
+	 * @param port (inférieur ou égal 1023 si non root)
 	 * @param bdd
 	 */
 	public Serveur(int port, BDD bdd) {
@@ -91,7 +91,7 @@ public class Serveur {
 		return null;
 	}
 
-	public Set<Utilisateur> getUtilisateurs() {
+	public Set<ServiceUtilisateur> getUtilisateurs() {
 		return null;
 	}
 
@@ -99,20 +99,20 @@ public class Serveur {
 		return 1;
 	}
 
-	public int ajouterUtilisateur(Utilisateur utilisateur) {
+	public int ajouterUtilisateur(ServiceUtilisateur utilisateur) {
 		return 1;
 	}
 
-	public int supprimerUtilisateur(Utilisateur utilisateur) {
+	public int supprimerUtilisateur(ServiceUtilisateur utilisateur) {
 		return 1;
 	}
 
-	public int insererDansGroupe(Utilisateur utilisateur) {
+	public int insererDansGroupe(ServiceUtilisateur utilisateur) {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}
 
-	public int supprimerDansGroupe(Utilisateur utilisateur) {
+	public int supprimerDansGroupe(ServiceUtilisateur utilisateur) {
 		// TODO implement this operation
 		throw new UnsupportedOperationException("not implemented");
 	}

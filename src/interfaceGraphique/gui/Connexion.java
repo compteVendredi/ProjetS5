@@ -18,9 +18,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
+import commun.Groupe;
 import interfaceGraphique.gui.user.User;
-import utilisateur.Groupe;
-import utilisateur.Utilisateur;
+import utilisateur.ServiceUtilisateur;
 import utilitaire.HashUtil;
 
 public class Connexion extends JFrame {
@@ -162,12 +162,12 @@ public class Connexion extends JFrame {
 	private void btnConnexionListener(ActionEvent event) {
 		String userName, password;
 		char tempPassword[];
-		Utilisateur utilisateur;
+		ServiceUtilisateur utilisateur;
 		
 		userName = idField.getText();
 		tempPassword = passwordField.getPassword();
 		password = new String(tempPassword);
-		utilisateur = new Utilisateur(userName, HashUtil.applySha256(password), "", "");
+		utilisateur = new ServiceUtilisateur(userName, HashUtil.applySha256(password), "", "");
 		if (utilisateur.seConnecter("localhost", 9999) == 0) {
 			User.setCurrentUser(utilisateur);
 			User user = new User();

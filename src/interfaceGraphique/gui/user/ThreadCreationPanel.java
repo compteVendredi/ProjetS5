@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import utilisateur.Message;
+import commun.Message;
 
 public class ThreadCreationPanel extends JPanel {
 	/**
@@ -30,7 +30,7 @@ public class ThreadCreationPanel extends JPanel {
 		this.setLayout(new BorderLayout(0, 0));
 		this.setBackground(Color.DARK_GRAY);
 		
-		JLabel titre = new JLabel("Créer un nouveau fil de discussion", JLabel.CENTER);
+		JLabel titre = new JLabel("Crï¿½er un nouveau fil de discussion", JLabel.CENTER);
 		this.add(titre, BorderLayout.NORTH);
 		titre.setPreferredSize(new Dimension(0, 100));
 		JPanel panelInter = new JPanel();

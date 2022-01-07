@@ -11,9 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import utilisateur.FilDiscussion;
-import utilisateur.Message;
-import utilisateur.Utilisateur;
+import commun.FilDiscussion;
+import commun.Message;
+import commun.Utilisateur;
+
+/**
+ * Base De Donnée
+ */
 
 public class BDD {
 	private String login;

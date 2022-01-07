@@ -5,8 +5,18 @@ import java.util.concurrent.TimeUnit;
 import serveur.BDD;
 import serveur.Serveur;
 
+/**
+ * interfaceServeur
+ *
+ */
+
 public class InterfaceServeur {
 
+	/**
+	 * Permet de lancer pendant 100s l'interface serveur
+	 * @param args
+	 */
+	
 	public static void main(String args[]) {
 		System.out.println("--------Serveur--------");
 		BDD bdd = new BDD("root", "", "jdbc:mysql://localhost:3306/s5");

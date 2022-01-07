@@ -20,9 +20,9 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import utilisateur.FilDiscussion;
-import utilisateur.Message;
-import utilisateur.Utilisateur;
+import commun.FilDiscussion;
+import commun.Message;
+import utilisateur.ServiceUtilisateur;
 
 public class ThreadPanel extends JPanel {
 	/**
@@ -33,7 +33,7 @@ public class ThreadPanel extends JPanel {
 	private FilDiscussion fd;
 	JScrollPane scrollPane_2;
 	
-	public ThreadPanel(DefaultMutableTreeNode node, Utilisateur currentUser) {
+	public ThreadPanel(DefaultMutableTreeNode node, ServiceUtilisateur currentUser) {
 		this.setBackground(Color.DARK_GRAY);
 		this.setLayout(new BorderLayout(0, 0));
 		

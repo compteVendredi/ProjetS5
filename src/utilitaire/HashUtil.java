@@ -2,6 +2,11 @@ package utilitaire;
 
 import java.security.MessageDigest;
 
+/**
+ * Classe utilitaire pour hasher selon sha256
+ *
+ */
+
 public class HashUtil {
 
 	// Applies Sha256 to a string and returns the result.

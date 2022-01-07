@@ -11,7 +11,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
-import utilisateur.FilDiscussion;
+import commun.FilDiscussion;
 
 public class ThreadTree extends JTree {
 	

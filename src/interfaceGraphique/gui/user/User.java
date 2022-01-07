@@ -3,7 +3,7 @@ package interfaceGraphique.gui.user;
 import java.awt.Color;
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
-import utilisateur.Utilisateur;
+import utilisateur.ServiceUtilisateur;
 import javax.swing.JPanel;
 import java.awt.event.WindowAdapter;
 
@@ -12,7 +12,7 @@ public class User extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 2299593615803888403L;
-	private static Utilisateur CurrentUser = null;
+	private static ServiceUtilisateur CurrentUser = null;
 	
 	public User() {
 		super("InterUniv");
@@ -35,11 +35,11 @@ public class User extends JFrame {
 		});
 	}
 	
-	public static Utilisateur getCurrentUser() {
+	public static ServiceUtilisateur getCurrentUser() {
 		return CurrentUser;
 	}
 	
-	public static void setCurrentUser(Utilisateur currentUser) {
+	public static void setCurrentUser(ServiceUtilisateur currentUser) {
 		CurrentUser = currentUser;
 	}
 	

@@ -17,7 +17,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import utilisateur.FilDiscussion;
+
+import commun.FilDiscussion;
 
 public class NavigationPanel extends JPanel {
 	/**
