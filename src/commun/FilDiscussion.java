@@ -10,9 +10,9 @@ import java.util.List;
 
 public class FilDiscussion {
 	
-	private List<Message> messages = new ArrayList<>();
-	private int id_filDiscussion;
-	private String id_groupe;
+	protected List<Message> messages = new ArrayList<>();
+	protected int id_filDiscussion;
+	protected String id_groupe;
 
 	/**
 	 * Créer un fil de discussion
