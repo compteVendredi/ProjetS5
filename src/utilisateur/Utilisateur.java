@@ -183,7 +183,7 @@ public class Utilisateur {
 	
 	/**
 	 * Récupère la liste des groupes de l'utilisateur
-	 * @return les groupes de l'utilisateur
+	 * @return les groupes de l'utilisateur ou null si erreur
 	 */
 	
 	public List<String> getGroupesUtilisateur() {
