@@ -8,9 +8,9 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import commun.FilDiscussion;
+import commun.FilDiscussionUtilisateur;
 import commun.Message;
 import utilitaire.Communication;
 
@@ -153,10 +153,10 @@ public class ServiceThreadUtilisateur extends Thread {
 				break;}
 			case Communication.demandeTousFils:{
 				String id_utilisateur = Communication.lireMsg(is);
-				List<FilDiscussion> listeFils = new LinkedList<FilDiscussion>();
-				Map<Integer, String> mapTousFils = bdd.getListFil(id_utilisateur);
-				for (Map.Entry<Integer, String> pair : mapTousFils.entrySet()) {
-				    listeFils.add(new FilDiscussion(new Message(null, null, null, null, null, pair.getValue()),pair.getKey(), ""));
+				List<FilDiscussionUtilisateur> listeFils = new LinkedList<FilDiscussionUtilisateur>();
+				List<String[]> tousFils = bdd.getListFil(id_utilisateur);
+				for (String[] i : tousFils) {
+				    listeFils.add(new FilDiscussionUtilisateur(new Message(null, null, null, null, null, i[1]),Integer.parseInt(i[0]), "", Integer.parseInt(i[2])));
 				}
 				Communication.envoyerMsg(os, Communication.gson.toJson(listeFils));
 				break;}

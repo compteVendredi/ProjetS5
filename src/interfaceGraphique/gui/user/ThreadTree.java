@@ -8,10 +8,9 @@ import java.util.ListIterator;
 import javax.swing.JTree;
 import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
-import commun.FilDiscussion;
+import commun.FilDiscussionUtilisateur;
 
 public class ThreadTree extends JTree {
 	
@@ -20,9 +19,9 @@ public class ThreadTree extends JTree {
 		List<String> listeGroupes = User.getCurrentUser().getGroupesUtilisateur();
 		for (int i = 0; i < listeGroupes.size(); i++) {
 		DefaultMutableTreeNode newGroupe = new DefaultMutableTreeNode(listeGroupes.get(i));
-		List<FilDiscussion> listeFils = User.getCurrentUser().getAllFilDiscussion();
-			for (ListIterator<FilDiscussion> iterateur = listeFils.listIterator(); iterateur.hasNext();) {
-					FilDiscussion newFil = iterateur.next();
+		List<FilDiscussionUtilisateur> listeFils = User.getCurrentUser().getAllFilDiscussion();
+			for (ListIterator<FilDiscussionUtilisateur> iterateur = listeFils.listIterator(); iterateur.hasNext();) {
+					FilDiscussionUtilisateur newFil = iterateur.next();
 					DefaultMutableTreeNode newSujet = new DefaultMutableTreeNode(newFil);
 					newGroupe.add(newSujet);
 			}

@@ -12,6 +12,7 @@ import java.util.List;
 import com.google.gson.reflect.TypeToken;
 
 import commun.FilDiscussion;
+import commun.FilDiscussionUtilisateur;
 import commun.Groupe;
 import commun.Message;
 import commun.Utilisateur;
@@ -75,9 +76,9 @@ public class ServiceUtilisateur extends Utilisateur {
 			else
 				return 2;
 		}
-		ServiceUtilisateur e = Communication.gson.fromJson(Communication.lireMsg(is), ServiceUtilisateur.class);
-		nom = e.nom;
-		prenom = e.prenom;
+		Utilisateur e = Communication.gson.fromJson(Communication.lireMsg(is), Utilisateur.class);
+		nom = e.getNom();
+		prenom = e.getPrenom();
 
 		return 0;
 	}
@@ -145,15 +146,15 @@ public class ServiceUtilisateur extends Utilisateur {
 	 * Récupère tous les fils de discussion
 	 * @return tous les fils de discussion ou null en cas d'échec
 	 */
-	public List<FilDiscussion> getAllFilDiscussion() {
-		if (Communication.envoyerMsg(os, Communication.demandeTousFils) != 0)
+	public List<FilDiscussionUtilisateur> getAllFilDiscussion() {
+		if (Communication.envoyerMsg(os, Communication.demandeTousFils) != 0	)
 			return null;
 		if (Communication.envoyerMsg(os, identifiant) != 0)
 			return null;		
 		String res;
 		if((res = Communication.lireMsg(is)) == null) 
 			return null;
-		return Communication.gson.fromJson(res, new TypeToken<List<FilDiscussion>>(){}.getType());
+		return Communication.gson.fromJson(res, new TypeToken<List<FilDiscussionUtilisateur>>(){}.getType());
 	}
 	
 	
