@@ -52,7 +52,7 @@ public class Serveur {
 	/**
 	 * Arrete le serveur
 	 * 
-	 * @return 0 si succès 1 sinon
+	 * @return 0 si succès 1 (ou 2 si IO erreur) sinon
 	 */
 	public int arreter() {
 		bdd.seDeconnecter();
