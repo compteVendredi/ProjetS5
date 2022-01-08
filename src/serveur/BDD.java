@@ -439,15 +439,15 @@ public class BDD {
 	}	
 	
 	public int updateUtilisateurMDP(String id_utilisateur,String mdp) {
-		return requeteEcriture("Update utilisateur Set motDePasse = '"+mdp+"' Where id_utilisateur = '"+id_utilisateur+"'");
+		return requeteEcriture("Update Utilisateur Set motDePasse = '"+mdp+"' Where id_utilisateur = '"+id_utilisateur+"'");
 	}
 	
 	public int updateUtilisateurNom(String id_utilisateur,String nom) {
-		return requeteEcriture("Update utilisateur Set nom = '"+nom+"' Where id_utilisateur = '"+id_utilisateur+"'");
+		return requeteEcriture("Update Utilisateur Set nom = '"+nom+"' Where id_utilisateur = '"+id_utilisateur+"'");
 	}
 	
 	public int updateUtilisateurPrenom(String id_utilisateur,String prenom) {
-		return requeteEcriture("Update utilisateur Set prenom = '"+prenom+"' Where id_utilisateur = '"+id_utilisateur+"'");
+		return requeteEcriture("Update Utilisateur Set prenom = '"+prenom+"' Where id_utilisateur = '"+id_utilisateur+"'");
 	}
 	
 }
