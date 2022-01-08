@@ -12,7 +12,6 @@ import java.util.List;
 import commun.FilDiscussion;
 import commun.Message;
 import commun.Utilisateur;
-import utilitaire.Communication;
 
 public class BDD {
 	private String login;
@@ -29,6 +28,7 @@ public class BDD {
 
 	/**
 	 * Essaye de se connecter
+	 * 
 	 * @return 0 si succès 1 si SQLTimeoutException 2 si SQLException
 	 */
 	public int seConnecter() {
@@ -36,10 +36,10 @@ public class BDD {
 			con = DriverManager.getConnection(url, login, motDePasse);
 			stmt = con.createStatement();
 		} catch (SQLTimeoutException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return 1;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return 2;
 		}
 		return 0;
@@ -47,15 +47,18 @@ public class BDD {
 
 	/**
 	 * Se déconnecte
+	 * 
 	 * @see seConnecter
 	 */
 	public int seDeconnecter() {
 		con = null;
 		return 0;
+
 	}
 
 	/**
 	 * Renvoie le résultat d'une requête (lecture) sql
+	 * 
 	 * @param requete
 	 * @return resultatRequete ou null si erreur
 	 */
@@ -64,14 +67,16 @@ public class BDD {
 		try {
 			resultSet = stmt.executeQuery(requete);
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return null;
 		}
 		return resultSet;
+
 	}
 
 	/**
 	 * Exécute une requête (écriture) sql
+	 * 
 	 * @param requete
 	 * @return 0 si succès 1 sinon
 	 */
@@ -79,16 +84,17 @@ public class BDD {
 		try {
 			stmt.executeUpdate(requete);
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return 1;
 		}
 		return 0;
 	}
 	
 	/**
-	 * Exécute une requête (écriture) sql avec un retour de la clef généré 
+	 * Exécute une requête (écriture) sql avec un retour
+	 * 
 	 * @param requete
-	 * @return clef générée par l'écriture 
+	 * @return ResultSet
 	 */
 	private int requeteEcritureReturn(String requete) {
 		try {
@@ -98,16 +104,11 @@ public class BDD {
 			resultSet.next();
 			return resultSet.getInt(1);
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return -1;
 		}
 	}
-	
-	/**
-	 * Test si un utilisateur existe
-	 * @param id_utilisateur
-	 * @return true si l'utilisateur existe, false sinon
-	 */
+		
 	public boolean existeUser(String id_utilisateur) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM Utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
@@ -118,15 +119,11 @@ public class BDD {
 			} else
 				return true;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return false;
 		}
 	}
-	
-	/**
-	 * Liste de tout les utilisateurs 
-	 * @return List de tout les utilisateurs de la BDD
-	 */
+
 	public List<Utilisateur> getAllUser() {
 		List<Utilisateur> liste = new ArrayList<>();
 		ResultSet resultSet = null;
@@ -138,17 +135,28 @@ public class BDD {
 			}
 			return liste;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<String> getAllIdUsersGroup(String idGroupe) {
+		List<String> liste = new ArrayList<>();
+		ResultSet resultSet = null;
+		resultSet = requeteLecture("SELECT id_utilisateur FROM Appartenance WHERE id_groupe='" + idGroupe + "'");
+		try {
+			while (resultSet.next()) {
+				String idUser = resultSet.getString("id_utilisateur");
+				liste.add(idUser);
+			}
+			return liste;
+		} catch (SQLException e) {
+			e.printStackTrace();
 			return null;
 		}
 		
 	}
-	
-	/**
-	 * Get le hash du MDP d'un utilisateur
-	 * @param id_utilisateur
-	 * @return Le hash du MDP
-	 */
+
 	public String getHash(String id_utilisateur) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT motDePasse FROM Utilisateur WHERE id_utilisateur='" + id_utilisateur + "'");
@@ -156,16 +164,11 @@ public class BDD {
 			resultSet.next();
 			return resultSet.getString("motDePasse");
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	/**
-	 * Get la liste des fils d'un utilisateur
-	 * @param id_utilisateur
-	 * @return List de String[] : String[0] = id_fil, String[1] = premier message, String[2] = nombre de message non lu
-	 */
 	public List<String[]> getListFil(String id_utilisateur) {
 		List<String[]> list = new ArrayList<>();
 		List<Integer> listId_fil = new ArrayList<>();
@@ -185,17 +188,11 @@ public class BDD {
 			}
 			return list;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	/**
-	 * Calcule le nombre de messages non lus d'un fils d'un utilisateur
-	 * @param id_fil
-	 * @param id_utilisateur
-	 * @return Le nombre de message non lu
-	 */
 	private int nbMessageNonLu(int id_fil, String id_utilisateur) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT COUNT(Message.id_message) AS total FROM Message INNER JOIN Lu WHERE Message.id_message = Lu.id_message AND Message.id_FilDiscussion = "+id_fil+" AND Lu.id_utilisateur = '" + id_utilisateur + "'");
@@ -206,15 +203,11 @@ public class BDD {
 			resultSet.next();
 			return resultSet.getInt("nb_message") - nb_lu;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return -1;
 		}
 	}
 	
-	/**
-	 * Check le nombre d'utilisateurs qui ont reçu le fil et change la couleur si tous les utilisateurs ont reçu le fil
-	 * @param id_filDiscussion
-	 */
 	private void actualiseStatutRecu(int id_filDiscussion) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM Recu WHERE id_filDiscussion =" + id_filDiscussion);
@@ -227,16 +220,10 @@ public class BDD {
 				requeteEcriture("UPDATE Message SET statut = 'Orange' WHERE id_filDiscussion = " + id_filDiscussion + " AND statut = 'Rouge'");
 			}
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 		}
 	}
 	
-	/**
-	 * Récupère un fil dans la BDD met les messages en lu pour l'utilisateur  
-	 * @param id_filDiscussion
-	 * @param id_utilisateur
-	 * @return FilDiscussion avec tout les messages
-	 */
 	public FilDiscussion getFil(int id_filDiscussion, String id_utilisateur) {
 		ResultSet resultSet = null;
 		List<Integer> list = new ArrayList<>();
@@ -267,16 +254,11 @@ public class BDD {
 			}
 			return fil;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	/**
-	 * Check le nombre d'utilisateurs qui ont lu le message et change la couleur si tous les utilisateurs ont lu le message
-	 * @param id_message
-	 * @param id_filDiscussion
-	 */
 	private void actualiseStatutlu(int id_message, int id_filDiscussion) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT COUNT(id_utilisateur) AS total FROM Lu WHERE id_message =" + id_message);
@@ -289,15 +271,10 @@ public class BDD {
 				requeteEcriture("UPDATE Message SET statut = 'Vert' WHERE id_filDiscussion = " + id_filDiscussion + " AND statut = 'Orange'");
 			}
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * Get un utilisateur avec son id
-	 * @param id_utilisateur
-	 * @return Utilisateur 
-	 */
+
 	public Utilisateur getUtilisateur(String id_utilisateur) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT * FROM Utilisateur WHERE id_utilisateur = '" + id_utilisateur + "'");
@@ -307,15 +284,11 @@ public class BDD {
 			user = new Utilisateur(id_utilisateur, resultSet.getString("motDePasse"),resultSet.getString("nom"), resultSet.getString("prenom"));
 			return user;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return null;
 		}
 	}
-	
-	/**
-	 * Récupère la liste de tous les groupes de la BDD
-	 * @return List avec tout les id des groupe
-	 */
+
 	public List<String> getListGroupe() {
 		List<String> liste = new ArrayList<>();
 		ResultSet resultSet = null;
@@ -326,16 +299,11 @@ public class BDD {
 			}
 			return liste;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	/**
-	 * Récupère la liste des groupes d'un utilisateur
-	 * @param id_utilisateur
-	 * @return List avec tout les id des groupe de l'utilisateur
-	 */
 	public List<String> getListGroupeUtilisateur(String id_utilisateur) {
 		List<String> liste = new ArrayList<>();
 		ResultSet resultSet = null;
@@ -346,20 +314,12 @@ public class BDD {
 			}
 			return liste;
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return null;
 		}
 	}	
-	
-	/**
-	 * Ajoute un fil dans la BDD
-	 * @param id_utilisateur
-	 * @param date
-	 * @param message
-	 * @param id_groupe
-	 * @return 0 si succès 1 sinon
-	 */
-	public int ajouterFil(String id_utilisateur, String date, String message, String id_groupe) {
+
+	public FilDiscussion ajouterFil(String id_utilisateur, String date, String message, String id_groupe) {
 		ResultSet resultSet = null;
 		int num;
 		int nb_utilisateur;
@@ -391,19 +351,15 @@ public class BDD {
 				this.ajouterEstDans(id_utilisateur, num);
 			}
 			// Insert lu pour l'utilisateur 
-			return requeteEcriture("INSERT INTO Recu VALUES ("+ num + ",'"+ id_utilisateur +"')");
+			requeteEcriture("INSERT INTO Recu VALUES ("+ num + ",'"+ id_utilisateur +"')");
+			return this.getFil(num, id_utilisateur);
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
-			return 1;
+			e.printStackTrace();
+			return null;
 		}
 	}
 
-	/**
-	 * Ajoute un message dans un fil 
-	 * @param id_utilisateur
-	 * @param id_fil
-	 * @param date
-	 * @param message
+	/*
 	 * @return 0 si succès 1 sinon
 	 */
 	public int ajouterMessage(String id_utilisateur, int id_fil, String date, String message) {
@@ -414,43 +370,19 @@ public class BDD {
 		return 0;
 	}
 	
-	/**
-	 * Ajoute un utilisateur dans un fil
-	 * @param id_utilisateur
-	 * @param id_filDiscussion
-	 * @return 0 si succès 1 sinon
-	 */
 	private int ajouterEstDans(String id_utilisateur, int id_filDiscussion) {
 		return requeteEcriture("INSERT INTO EstDans VALUES ('"+ id_utilisateur +"', "+ id_filDiscussion + ")");
 	}
-	
-	/**
-	 * Ajoute un utilisateur dans la BDD
-	 * @param id_user
-	 * @param hashMDP
-	 * @param Nom
-	 * @param prenom
-	 * @return 0 si succès 1 sinon
-	 */
-	public int ajouterUtilisateur(String id_user, String hashMDP, String Nom, String prenom) {
+
+	public int ajouterUser(String id_user, String hashMDP, String Nom, String prenom) {
 		return requeteEcriture("INSERT INTO utilisateur VALUES ('"+id_user+"', '"+hashMDP+"', '"+Nom+"', '"+prenom+"')");
 	}
 	
-	/**
-	 * Ajoute un groupe dans la BDD
-	 * @param role 
-	 * @return 0 si succès 1 sinon
-	 */
 	public int ajouterGroupe(String role){
-		return requeteEcriture("INSERT INTO Lu VALUES ('"+role+"',0)");
+		return requeteEcriture("INSERT INTO Groupe VALUES ('"+role+"',0)");
 	}
 	
-	/**
-	 * Supprime un utilisateur et tous ses messages
-	 * @param id_user
-	 * @return 0 si succès 1 sinon
-	 */
-	public int supprimerUtilisateur(String id_user) {
+	public int supprimerUser(String id_user) {
 		ResultSet resultSet = null;
 		List<String> listId_groupe = new ArrayList<>();
 		List<Integer> listId_fil = new ArrayList<>();
@@ -475,16 +407,11 @@ public class BDD {
 			}
 			return requeteEcriture("DELETE FROM Utilisateur WHERE id_utilisateur='"+id_user+"'");
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return 1;
 		}	
 	}
 	
-	/**
-	 * Supprime un message dans la BDD
-	 * @param id_message
-	 * @return 0 si succès 1 sinon
-	 */
 	public int supprimerMessage(int id_message) {
 		ResultSet resultSet = null;
 		resultSet = requeteLecture("SELECT id_filDiscussion FROM Message WHERE id_message = "+ id_message);
@@ -494,36 +421,20 @@ public class BDD {
 			requeteEcriture("Update FilDiscussion Set nb_message = nb_message - 1 Where id_filDiscussion = "+ id_fil);
 			return requeteEcriture("DELETE FROM Message WHERE id_message= " + id_message);
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return 1;
 		}	
 	}
 	
-	/**
-	 * Supprime un groupe dans la BDD
-	 * @param id_groupe
-	 * @return 0 si succès 1 sinon
-	 */
 	public int supprimerGroupe(String id_groupe) {
 		return requeteEcriture("DELETE FROM Groupe WHERE id_groupe='"+ id_groupe+"' ");
 	}
 	
-	/**
-	 * Supprime un fil dans la BDD
-	 * @param id_fil
-	 * @return 0 si succès 1 sinon
-	 */
 	public int supprimerFil(int id_fil) {
 		requeteEcriture("DELETE FROM Message WHERE id_filDiscussion= " + id_fil);
 		return requeteEcriture("DELETE FROM FilDiscussion WHERE id_filDiscussion= " + id_fil);
 	}
 	
-	/**
-	 * Insert un utilisateur dans un groupe
-	 * @param id_user
-	 * @param id_groupe
-	 * @return 0 si succès 1 sinon
-	 */
 	public int insertGroupe(String id_user, String id_groupe) {
 		ResultSet resultSet = null;
 		List<Integer> listId_fil = new ArrayList<>();
@@ -536,39 +447,21 @@ public class BDD {
 				requeteEcriture("INSERT INTO EstDans VALUES ('"+id_user+"', "+id_fil+")");
 			}
 		} catch (SQLException e) {
-			Communication.log("[ERREUR] sql exception : " + e.toString());
+			e.printStackTrace();
 			return 1;
 		}	
 		requeteEcriture("INSERT INTO Appartenance VALUES ('"+id_groupe+"', '"+id_user+"')");
 		return requeteEcriture("Update FilDiscussion Set nb_utilisateur = nb_utilisateur + 1 Where id_groupe = '"+id_groupe+"'");
 	}	
 	
-	/**
-	 * Change le hash du MDP d'un utilisateur
-	 * @param id_utilisateur
-	 * @param mdp
-	 * @return 0 si succès 1 sinon
-	 */
 	public int updateUtilisateurMDP(String id_utilisateur,String mdp) {
 		return requeteEcriture("Update Utilisateur Set motDePasse = '"+mdp+"' Where id_utilisateur = '"+id_utilisateur+"'");
 	}
 	
-	/**
-	 * Change le Nom d'un utilisateur
-	 * @param id_utilisateur
-	 * @param nom
-	 * @return 0 si succès 1 sinon
-	 */
 	public int updateUtilisateurNom(String id_utilisateur,String nom) {
 		return requeteEcriture("Update Utilisateur Set nom = '"+nom+"' Where id_utilisateur = '"+id_utilisateur+"'");
 	}
 	
-	/**
-	 * Change le Prénom d'un utilisateur
-	 * @param id_utilisateur
-	 * @param prenom
-	 * @return 0 si succès 1 sinon
-	 */
 	public int updateUtilisateurPrenom(String id_utilisateur,String prenom) {
 		return requeteEcriture("Update Utilisateur Set prenom = '"+prenom+"' Where id_utilisateur = '"+id_utilisateur+"'");
 	}

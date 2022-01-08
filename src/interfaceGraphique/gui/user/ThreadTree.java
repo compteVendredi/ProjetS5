@@ -16,10 +16,10 @@ public class ThreadTree extends JTree {
 	
 	public ThreadTree(DefaultMutableTreeNode mainRoot, TreeModel modele) {
 		super(modele);
-		List<String> listeGroupes = User.getCurrentUser().getGroupesUtilisateur();
+		List<String> listeGroupes = UserFrame.getCurrentUser().getGroupesUtilisateur();
 		for (int i = 0; i < listeGroupes.size(); i++) {
 		DefaultMutableTreeNode newGroupe = new DefaultMutableTreeNode(listeGroupes.get(i));
-		List<FilDiscussionUtilisateur> listeFils = User.getCurrentUser().getAllFilDiscussion();
+		List<FilDiscussionUtilisateur> listeFils = UserFrame.getCurrentUser().getAllFilDiscussion();
 			for (ListIterator<FilDiscussionUtilisateur> iterateur = listeFils.listIterator(); iterateur.hasNext();) {
 					FilDiscussionUtilisateur newFil = iterateur.next();
 					DefaultMutableTreeNode newSujet = new DefaultMutableTreeNode(newFil);

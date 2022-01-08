@@ -110,4 +110,7 @@ public class Utilisateur {
 		return prenom;
 	}
 
+	public String toString() {
+		return identifiant;
+	}
 }

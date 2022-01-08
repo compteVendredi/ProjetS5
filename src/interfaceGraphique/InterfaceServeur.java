@@ -1,9 +1,7 @@
 package interfaceGraphique;
 
-import java.util.concurrent.TimeUnit;
+import interfaceGraphique.gui.ConnexionBDD;
 
-import serveur.BDD;
-import serveur.Serveur;
 
 /**
  * interfaceServeur
@@ -13,24 +11,12 @@ import serveur.Serveur;
 public class InterfaceServeur {
 
 	/**
-	 * Permet de lancer pendant 100s l'interface serveur
+	 * Permet de lancer l'interface serveur
 	 * @param args
 	 */
 	
-	public static void main(String args[]) {
-		System.out.println("--------Serveur--------");
-		BDD bdd = new BDD("root", "", "jdbc:mysql://localhost:3306/s5");
-		Serveur serveur = new Serveur(9999, bdd);
-		
-		if(serveur.demarrer() == 0) {
-
-			try {
-				TimeUnit.SECONDS.sleep(100);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		serveur.arreter();
+	public static void main(String args[]) throws Exception {
+		ConnexionBDD connexion = new ConnexionBDD();
+		connexion.setVisible(true);
 	}
-
 }

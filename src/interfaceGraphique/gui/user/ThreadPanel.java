@@ -109,7 +109,7 @@ public class ThreadPanel extends JPanel {
 		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		this.add(scrollPane_2, BorderLayout.CENTER);
 		
-		List<Message> lm = User.getCurrentUser().getFilDiscussion(fd.getId_filDiscussion()).getMessages();
+		List<Message> lm = UserFrame.getCurrentUser().getFilDiscussion(fd.getId_filDiscussion()).getMessages();
 		for(ListIterator<Message> iterareur = lm.listIterator(); iterareur.hasNext();) {	
 			Message message = iterareur.next();
 
@@ -147,8 +147,8 @@ public class ThreadPanel extends JPanel {
 	private void btnEnvoyerMessageListener(ActionEvent event) {
 		Message message;
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		message = new Message(User.getCurrentUser().getIdentifiant(), User.getCurrentUser().getNom(), User.getCurrentUser().getPrenom(), dtf.format(LocalDateTime.now()), "Rouge", messageTextArea.getText());
-		User.getCurrentUser().envoyerMessage(message, fd);
+		message = new Message(UserFrame.getCurrentUser().getIdentifiant(), UserFrame.getCurrentUser().getNom(), UserFrame.getCurrentUser().getPrenom(), dtf.format(LocalDateTime.now()), "Rouge", messageTextArea.getText());
+		UserFrame.getCurrentUser().envoyerMessage(message, fd);
 		actualiserFil();
 	}
 }

@@ -19,18 +19,18 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
-import interfaceGraphique.gui.user.User;
+import interfaceGraphique.gui.user.UserFrame;
 import utilisateur.ServiceUtilisateur;
 import utilitaire.HashUtil;
 
 public class Connexion extends JFrame {
 	private static final long serialVersionUID = -983602126963088259L;
-	private JTextField idField;
-	private JPasswordField passwordField;
-	JButton btnConnexion = new JButton("CONNEXION");
+	protected JTextField idField;
+	protected JPasswordField passwordField;
+	protected JButton btnConnexion = new JButton("CONNEXION");
 	
 	public Connexion() throws Exception {
-		super("Connexion Ã  InterUniv");
+		super("Connexion Ã InterUniv");
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setSize(475, 350);
 		this.setLocationRelativeTo(null);
@@ -158,8 +158,8 @@ public class Connexion extends JFrame {
 		gbcPasswordField.gridy = 3;
 		return gbcPasswordField;
 	}
-	
-	private void btnConnexionListener(ActionEvent event) {
+
+	protected void btnConnexionListener(ActionEvent event) {
 		String userName, password;
 		char tempPassword[];
 		ServiceUtilisateur utilisateur;
@@ -169,9 +169,9 @@ public class Connexion extends JFrame {
 		password = new String(tempPassword);
 		utilisateur = new ServiceUtilisateur(userName, HashUtil.applySha256(password), "", "");
 		if (utilisateur.seConnecter("localhost", 9999) == 0) {
-			User.setCurrentUser(utilisateur);
-			User user = new User();
-			user.setVisible(true);
+			UserFrame.setCurrentUser(utilisateur);
+			UserFrame userFrame = new UserFrame();
+			userFrame.setVisible(true);
 			Connexion.this.dispose();
 		}
 	}

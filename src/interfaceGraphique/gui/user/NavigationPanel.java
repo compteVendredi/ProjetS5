@@ -67,7 +67,7 @@ public class NavigationPanel extends JPanel {
 						Class<FilDiscussion> c = FilDiscussion.class;
 						boolean b = c.isInstance(node.getUserObject());
 						if (b) {
-							JPanel sujetPanel = new ThreadPanel(node, User.getCurrentUser());
+							JPanel sujetPanel = new ThreadPanel(node, UserFrame.getCurrentUser());
 							contentPane.remove(baseThread);
 							contentPane.revalidate();
 							contentPane.add(sujetPanel, BorderLayout.CENTER);

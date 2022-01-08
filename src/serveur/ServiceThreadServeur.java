@@ -49,7 +49,6 @@ public class ServiceThreadServeur extends Thread {
 				nouveauUtilisateur.start();
 
 			}
-			Communication.log("Le serveur ne reçoit plus de nouveau client");
 		} catch (IOException e) {
 			Communication.log("Le serveur ne reçoit plus de nouveau client : " + e.toString());
 		}
