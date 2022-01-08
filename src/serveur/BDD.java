@@ -359,7 +359,7 @@ public class BDD {
 	}
 
 	public int ajouterUser(String id_user, String hashMDP, String Nom, String prenom) {
-		return requeteEcriture("INSERT INTO Lu VALUES ('"+id_user+"', '"+hashMDP+"', '"+Nom+"', '"+prenom+"')");
+		return requeteEcriture("INSERT INTO utilisateur VALUES ('"+id_user+"', '"+hashMDP+"', '"+Nom+"', '"+prenom+"')");
 	}
 	
 	public int ajouterGroupe(String role){
@@ -437,4 +437,17 @@ public class BDD {
 		requeteEcriture("INSERT INTO Appartenance VALUES ('"+id_groupe+"', '"+id_user+"')");
 		return requeteEcriture("Update FilDiscussion Set nb_utilisateur = nb_utilisateur + 1 Where id_groupe = '"+id_groupe+"'");
 	}	
+	
+	public int updateUtilisateurMDP(String id_utilisateur,String mdp) {
+		return requeteEcriture("Update utilisateur Set motDePasse = '"+mdp+"' Where id_utilisateur = '"+id_utilisateur+"'");
+	}
+	
+	public int updateUtilisateurNom(String id_utilisateur,String nom) {
+		return requeteEcriture("Update utilisateur Set nom = '"+nom+"' Where id_utilisateur = '"+id_utilisateur+"'");
+	}
+	
+	public int updateUtilisateurPrenom(String id_utilisateur,String prenom) {
+		return requeteEcriture("Update utilisateur Set prenom = '"+prenom+"' Where id_utilisateur = '"+id_utilisateur+"'");
+	}
+	
 }
