@@ -141,15 +141,13 @@ public class ServiceThreadUtilisateur extends Thread {
 			case Communication.demandeCreationMsg:{
 				Message msg = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
 				FilDiscussion filDiscu = Communication.gson.fromJson(Communication.lireMsg(is), FilDiscussion.class);
-				if(bdd.ajouterMessage(msg.getId_utilisateur(), filDiscu.getId_filDiscussion(),msg.getDate(), msg.getMessage()) != 0)
-					return 1;
+				bdd.ajouterMessage(msg.getId_utilisateur(), filDiscu.getId_filDiscussion(),msg.getDate(), msg.getMessage());
 				break;}
 			case Communication.demandeCreationFil:{
 				String id_utilisateur = Communication.lireMsg(is);
 				Message msg = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
 				String id_groupe = Communication.lireMsg(is);
-				if(bdd.ajouterFil(id_utilisateur, msg.getDate(), msg.getMessage(), id_groupe) == null)
-					return 1;
+				bdd.ajouterFil(id_utilisateur, msg.getDate(), msg.getMessage(), id_groupe);
 				break;}
 			case Communication.demandeTousFils:{
 				String id_utilisateur = Communication.lireMsg(is);
