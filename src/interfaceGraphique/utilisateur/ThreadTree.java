@@ -25,7 +25,8 @@ public class ThreadTree extends JTree {
 			for (ListIterator<FilDiscussionUtilisateur> iterateur = listeFils.listIterator(); iterateur.hasNext();) {
 					FilDiscussionUtilisateur newFil = iterateur.next();
 					DefaultMutableTreeNode newSujet = new DefaultMutableTreeNode(newFil);
-					newGroupe.add(newSujet);
+					if (listeGroupes.get(i) == newFil.getId_groupe())
+						newGroupe.add(newSujet);
 			}
 			mainRoot.add(newGroupe);
 		}
