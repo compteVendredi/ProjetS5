@@ -5,11 +5,11 @@ import java.awt.event.ActionEvent;
 import serveur.BDD;
 
 public class AddSupprUser extends PanelAddSuprr {
-	public AddSupprUser(String idUser, String idGroup, BDD accesGestion) {
-		super(idGroup, idUser, accesGestion);
+	public AddSupprUser(String idAffiche, String idParent, BDD accesGestion) {
+		super(idAffiche, idParent, accesGestion);
 	}
 	
 	protected void btnDelete(ActionEvent event) {
-		accesGestion.supprimerUtilisateurGroupe(idGroup, idUser);
+		accesGestion.supprimerUtilisateurGroupe(idAffiche, idParent);
 	}
 }

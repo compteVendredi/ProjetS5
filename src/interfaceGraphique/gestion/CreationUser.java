@@ -6,14 +6,21 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import commun.Utilisateur;
 import serveur.BDD;
 import utilitaire.HashUtil;
 
@@ -23,13 +30,21 @@ public class CreationUser extends JPanel {
 	private JTextField nameField;
 	private JTextField firstNameField;
 	private BDD accesGestion;
+	private JPanel panel_1, informationPanel;
+	private Container contentPane;
+	private Utilisateur targetUser;
+	private JList list;
 	
-	public CreationUser(BDD accesGestion, Container contentPane) {
+	public CreationUser(BDD accesGestion, Container contentPane, JPanel panel_1, JPanel informationPanel, Utilisateur targetUser, JList<Utilisateur> list) {
 		this.accesGestion = accesGestion;
 		this.setLayout(new BorderLayout(0, 0));
+		this.panel_1 = panel_1;
+		this.informationPanel = informationPanel;
+		this.targetUser = targetUser;
+		this.contentPane = contentPane;
+		this.list = list;
 		
 		JPanel panel_5 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel_5.getLayout();
 		this.add(panel_5, BorderLayout.NORTH);
 		
 		JLabel lblNewLabel_5 = new JLabel("Creation Utilisateur");
@@ -110,6 +125,32 @@ public class CreationUser extends JPanel {
 				CreationUser.this.removeAll();
 				JPanel newPanel = new JPanel();
 				CreationUser.this.add(newPanel);
+				
+				DefaultListModel<Utilisateur> modeleList = new DefaultListModel<>();
+				List<Utilisateur> listeUtilisateurs = CreationUser.this.accesGestion.getAllUser();
+				for (ListIterator<Utilisateur> iterateur = listeUtilisateurs.listIterator(); iterateur.hasNext();) {
+					Utilisateur user = iterateur.next();
+					modeleList.addElement(user);
+				}
+				JList<Utilisateur> list = new JList<>(modeleList);
+				list.addMouseListener( new MouseAdapter()
+				{
+				    public void mousePressed(MouseEvent e)
+				    {
+				        if (e.getButton() == MouseEvent.BUTTON1 )
+				        {
+				        	CreationUser.this.targetUser = (Utilisateur) list.getSelectedValue();
+				        	informationPanel.removeAll();
+				        	CreationUser.this.contentPane.remove(informationPanel);
+							CreationUser.this.contentPane.revalidate();
+				        	CreationUser.this.informationPanel = new UserPanel(accesGestion, targetUser.getIdentifiant(), accesGestion.getHash(targetUser.getIdentifiant()), targetUser.getPrenom(), targetUser.getNom(), contentPane);
+				        	CreationUser.this.add(informationPanel, BorderLayout.CENTER);
+				        	CreationUser.this.contentPane.revalidate();
+				        }
+				    }
+				});
+				panel_1.remove(CreationUser.this.list);
+				panel_1.add(list, BorderLayout.CENTER);
 				contentPane.revalidate();
 			}
 		});

@@ -94,7 +94,7 @@ public class UserPanel extends JPanel {
 		Component verticalStrut_4 = Box.createVerticalStrut(20);
 		panel_7.add(verticalStrut_4);
 		
-		JLabel lblNewLabel_3 = new JLabel("Pr�nom");
+		JLabel lblNewLabel_3 = new JLabel("Prénom");
 		lblNewLabel_3.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel_7.add(lblNewLabel_3);
 		
@@ -145,7 +145,7 @@ public class UserPanel extends JPanel {
 		List<String> listeGroupes = accesGestion.getListGroupeUtilisateur(id);
 		for (ListIterator<String> iterateur = listeGroupes.listIterator(); iterateur.hasNext();) {
 			String idGroupe = iterateur.next();
-			JPanel newPanel = new AddSupprUser(id, idGroupe, accesGestion);
+			JPanel newPanel = new AddSupprUser(idGroupe, id, accesGestion);
 			listePane.add(newPanel);
 		}
 		panel_7.add(scrollPane, BorderLayout.CENTER);
@@ -179,15 +179,11 @@ public class UserPanel extends JPanel {
 			nb++;
 		}
 		
-		String s = (String)JOptionPane.showInputDialog(
-							this,
-		                    "Choissisez un groupe à ajouter\n",
+		String s = (String)JOptionPane.showInputDialog(this, "Choissisez un groupe à ajouter\n",
 		                    "Ajout d'un groupe",
 		                    JOptionPane.PLAIN_MESSAGE,
 		                    null, possibilities,
 		                    possibilities[0]);
-
-		//If a string was returned, say so.
 		if ((s != null) && (s.length() > 0)) {
 			accesGestion.insertGroupe(id, s);
 		}

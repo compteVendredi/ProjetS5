@@ -42,6 +42,7 @@ public class UsersPanel extends JPanel {
 	private Utilisateur targetUser;
 	private BDD accesGestion = null;
 	private Container contentPane;
+	private JPanel panel_1;
 	
 	public UsersPanel(BDD accesGestion, Container contentPane) {
 		this.contentPane = contentPane;
@@ -51,7 +52,7 @@ public class UsersPanel extends JPanel {
 		this.add(informationPanel, BorderLayout.CENTER);
 		this.setLayout(new BorderLayout(0, 0));
 		this.accesGestion = accesGestion;
-		JPanel panel_1 = new JPanel();
+		panel_1 = new JPanel();
 		panel_1.setBackground(Color.GRAY);
 		panel_1.setPreferredSize(new Dimension(200, 0));
 		this.add(panel_1, BorderLayout.WEST);
@@ -100,7 +101,7 @@ public class UsersPanel extends JPanel {
 	private void btnAjouterUtilisateur(ActionEvent event) {
 		informationPanel.removeAll();
 		contentPane.remove(informationPanel);
-		informationPanel = new CreationUser(accesGestion, contentPane);
+		informationPanel = new CreationUser(accesGestion, contentPane, panel_1, informationPanel, targetUser, list);
 		this.add(informationPanel, BorderLayout.CENTER);
 		contentPane.revalidate();
 	}

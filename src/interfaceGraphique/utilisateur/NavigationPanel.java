@@ -21,9 +21,7 @@ import javax.swing.tree.TreePath;
 
 import commun.FilDiscussion;
 import commun.FilDiscussionUtilisateur;
-import utilisateur.ServiceUtilisateur;
 
-import java.lang.Thread;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -39,6 +37,7 @@ public class NavigationPanel extends JPanel {
 	private DefaultMutableTreeNode mainRoot;
 	private DefaultTreeModel treeModele;
 	private DefaultMutableTreeNode node;
+	private int idFil = -1;
 	
 	public NavigationPanel(Container contentPane, JPanel baseThread) throws Exception {
 		this.contentPane = contentPane;
@@ -62,19 +61,21 @@ public class NavigationPanel extends JPanel {
         			for (ListIterator<FilDiscussionUtilisateur> iterateur = listeFils.listIterator(); iterateur.hasNext();) {
         					FilDiscussionUtilisateur newFil = iterateur.next();
         					DefaultMutableTreeNode newSujet = new DefaultMutableTreeNode(newFil);
-        					if (groupe.getUserObject() == newFil.getId_groupe())
+      
+        					if (groupe.getUserObject() == newFil.getId_groupe()) {
         						groupe.add(newSujet);
+        					}
         			}
             	}
             	baseThread.removeAll();
             	contentPane.remove(baseThread);
             
-            	DefaultMutableTreeNode nodeTemp = new DefaultMutableTreeNode(node);
-            	FilDiscussionUtilisateur test = (FilDiscussionUtilisateur) NavigationPanel.this.mainRoot.getUserObject();
-            	NavigationPanel.this.baseThread = new ThreadPanel(test.getId_filDiscussion(), UserFrame.getCurrentUser());
-				contentPane.add(NavigationPanel.this.baseThread, BorderLayout.CENTER);
-				contentPane.revalidate();
-				treeModele.reload();
+            	if (idFil >=0) {
+            		NavigationPanel.this.baseThread = new ThreadPanel(idFil, UserFrame.getCurrentUser());
+            		contentPane.add(NavigationPanel.this.baseThread, BorderLayout.CENTER);
+            		contentPane.revalidate();
+            		treeModele.reload();
+            	}
             }
         };
         
@@ -110,7 +111,8 @@ public class NavigationPanel extends JPanel {
 						boolean b = c.isInstance(node.getUserObject());
 						if (b) {
 							FilDiscussion test = (FilDiscussion) node.getUserObject();
-							JPanel sujetPanel = new ThreadPanel(test.getId_filDiscussion(), UserFrame.getCurrentUser());
+							NavigationPanel.this.idFil = test.getId_filDiscussion();
+							JPanel sujetPanel = new ThreadPanel(idFil, UserFrame.getCurrentUser());
 							baseThread.removeAll();
 							contentPane.remove(baseThread);
 							contentPane.revalidate();

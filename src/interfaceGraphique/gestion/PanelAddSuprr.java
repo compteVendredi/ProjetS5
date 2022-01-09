@@ -13,14 +13,14 @@ import javax.swing.JPanel;
 import serveur.BDD;
 
 public class PanelAddSuprr extends JPanel {
-	protected String idUser;
-	protected String idGroup;
+	protected String idAffiche;
+	protected String idParent;
 	protected BDD accesGestion;
 	
 	public PanelAddSuprr(String idAffiche, String idParent, BDD accesGestion) {
-		this.idGroup = idParent;
+		this.idParent = idParent;
 		this.accesGestion = accesGestion;
-		this.idUser = idAffiche;
+		this.idAffiche = idAffiche;
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
 		JLabel lblNewLabel_1 = new JLabel(idAffiche);
@@ -37,6 +37,6 @@ public class PanelAddSuprr extends JPanel {
 	}
 	
 	protected void btnDelete(ActionEvent event) {
-		accesGestion.supprimerUtilisateurGroupe(idGroup, idUser);
+		accesGestion.supprimerUtilisateurGroupe(idAffiche, idParent);
 	}
 }

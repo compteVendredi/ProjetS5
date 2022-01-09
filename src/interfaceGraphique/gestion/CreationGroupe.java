@@ -6,11 +6,17 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -23,13 +29,21 @@ public class CreationGroupe extends JPanel {
 	private JTextField nameField;
 	private JTextField firstNameField;
 	private BDD accesGestion;
+	private String targetGroupe;
+	private JPanel panel_1, informationPanel;
+	private Container contentPane;
+	private JList<String> list;
 	
-	public CreationGroupe(BDD accesGestion, Container contentPane) {
+	public CreationGroupe(BDD accesGestion, Container contentPane, JPanel panel_1, JPanel informationPanel, String targetGroupe, JList<String> list) {
 		this.accesGestion = accesGestion;
 		this.setLayout(new BorderLayout(0, 0));
+		this.contentPane = contentPane;
+		this.panel_1 = panel_1;
+		this.informationPanel = informationPanel;
+		this.targetGroupe = targetGroupe;
+		this.list = list;
 		
 		JPanel panel_5 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel_5.getLayout();
 		this.add(panel_5, BorderLayout.NORTH);
 		
 		JLabel lblNewLabel_5 = new JLabel("Creation d'un groupe");
@@ -66,6 +80,32 @@ public class CreationGroupe extends JPanel {
 				CreationGroupe.this.removeAll();
 				JPanel newPanel = new JPanel();
 				CreationGroupe.this.add(newPanel);
+				
+				DefaultListModel<String> modeleList = new DefaultListModel<>();
+				List<String> listeGroupes = accesGestion.getListGroupe();
+				for (ListIterator<String> iterateur = listeGroupes.listIterator(); iterateur.hasNext();) {
+					String idGroupe = iterateur.next();
+					modeleList.addElement(idGroupe);
+				}
+				JList<String> list = new JList<>(modeleList);
+				list.addMouseListener( new MouseAdapter()
+				{
+				    public void mousePressed(MouseEvent e)
+				    {
+				        if (e.getButton() == MouseEvent.BUTTON1 )
+				        {
+				        	CreationGroupe.this.targetGroupe = list.getSelectedValue();
+				        	informationPanel.removeAll();
+				        	CreationGroupe.this.contentPane.remove(informationPanel);
+				        	CreationGroupe.this.contentPane.revalidate();
+				        	CreationGroupe.this.informationPanel = new GroupPanel(accesGestion, targetGroupe, contentPane);
+				        	CreationGroupe.this.add(informationPanel, BorderLayout.CENTER);
+				        	CreationGroupe.this.contentPane.revalidate();
+				        }
+				    }
+				});
+				panel_1.remove(CreationGroupe.this.list);
+				panel_1.add(list, BorderLayout.CENTER);
 				contentPane.revalidate();
 			}
 		});

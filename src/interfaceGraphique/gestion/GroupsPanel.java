@@ -30,6 +30,8 @@ public class GroupsPanel extends JPanel {
 	private JPanel informationPanel;
 	private Container contentPane;
 	private BDD accesGestion;
+	private JPanel panel_1;
+	private JList<String> list;
 	
 	public GroupsPanel(BDD accesGestion, Container contentPane) {
 		this.accesGestion = accesGestion;
@@ -40,7 +42,7 @@ public class GroupsPanel extends JPanel {
 		informationPanel.setLayout(new BorderLayout(0, 0));
 		this.add(informationPanel, BorderLayout.CENTER);
 		
-		JPanel panel_1 = new JPanel();
+		panel_1 = new JPanel();
 		panel_1.setBackground(Color.GRAY);
 		panel_1.setPreferredSize(new Dimension(200, 0));
 		this.add(panel_1, BorderLayout.WEST);
@@ -52,7 +54,7 @@ public class GroupsPanel extends JPanel {
 			String idGroupe = iterateur.next();
 			modeleList.addElement(idGroupe);
 		}
-		JList<String> list = new JList<>(modeleList);
+		list = new JList<>(modeleList);
 		list.addMouseListener( new MouseAdapter()
 		{
 		    public void mousePressed(MouseEvent e)
@@ -89,7 +91,7 @@ public class GroupsPanel extends JPanel {
 	private void btnAjouterGroupe(ActionEvent event) {
 		informationPanel.removeAll();
 		contentPane.remove(informationPanel);
-		informationPanel = new CreationGroupe(accesGestion, contentPane);
+		informationPanel = new CreationGroupe(accesGestion, contentPane, panel_1, informationPanel, targetGroupe, list);
 		this.add(informationPanel, BorderLayout.CENTER);
 		contentPane.revalidate();
 	}

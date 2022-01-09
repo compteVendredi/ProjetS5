@@ -70,12 +70,17 @@ public class GroupPanel extends JPanel {
 		titreListe.add(btnNewButton_2);
 		
 		panel_7.add(titreListe);
+		
 		JPanel listePane = new JPanel();
 		JScrollPane scrollPane = new JScrollPane(listePane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		listePane.setLayout(new BoxLayout(listePane, BoxLayout.Y_AXIS));
+		
 		List<String> listeUsers = accesGestion.getListGroupeUtilisateur(idGroupe);
+		System.out.println(listeUsers.size());
 		for (ListIterator<String> iterateur = listeUsers.listIterator(); iterateur.hasNext();) {
 			String idUser = iterateur.next();
+			System.out.println("coucou" + idUser);
+			System.out.println(idGroupe);
 			JPanel newPanel2 = new PanelAddSuprr(idUser, idGroupe, accesGestion);
 			listePane.add(newPanel2);
 		}
@@ -109,7 +114,6 @@ public class GroupPanel extends JPanel {
 		                    null, possibilities,
 		                    possibilities[0]);
 
-		//If a string was returned, say so.
 		if ((s != null) && (s.length() > 0)) {
 			accesGestion.insertGroupe(s, idGroupe);
 		}
