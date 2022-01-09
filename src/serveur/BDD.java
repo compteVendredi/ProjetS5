@@ -523,6 +523,30 @@ public class BDD {
 	}
 	
 	/**
+	 * Supprime un utilisateur d'un groupe
+	 * @param id_groupe
+	 * @return 0 si succès 1 sinon
+	 */
+	public int supprimerUtilisateurGroupe(String id_groupe, String id_utilisateur) {
+		ResultSet resultSet = null;
+		List<Integer> list = new ArrayList<>();
+		resultSet = requeteLecture("SELECT id_filDiscussion FROM FilDiscussion WHERE id_groupe = '"+id_groupe+"'");
+		try {
+			while (resultSet.next()) {
+				list.add(resultSet.getInt("id_filDiscussion"));
+			}
+			for (int id_fil : list) {
+				requeteEcriture("Update FilDiscussion Set nb_utilisateur = nb_utilisateur - 1 WHERE id_filDiscussion = "+id_fil);
+			}
+			requeteEcriture("Update Groupe Set nb_utilisateur = nb_utilisateur - 1 WHERE id_groupe = '"+id_groupe+"'");
+			return requeteEcriture("DELETE FROM Appartenance WHERE id_groupe='"+ id_groupe+"' AND id_utilisateur = '"+id_utilisateur+"'");
+		} catch (SQLException e) {
+			Communication.log("[ERREUR] sql exception : " + e.toString());
+			return 1;
+		}	
+	}
+	
+	/**
 	 * Supprime un fil dans la BDD
 	 * @param id_fil
 	 * @return 0 si succès 1 sinon
