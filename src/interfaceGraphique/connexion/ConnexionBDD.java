@@ -61,7 +61,7 @@ public class ConnexionBDD extends Connexion {
 			BDD accesServeur = new BDD(userName, password, urlBDD.getText());
 			Serveur serveur = new Serveur(9999, accesServeur);
 			if(serveur.demarrer() == 0) {
-				System.out.println("Serveur demarr�");
+				System.out.println("Serveur demarré");
 				serveurFrame = new ServeurFrame(serveur, accesGestion);
 				serveurFrame.setVisible(true);
 			}
