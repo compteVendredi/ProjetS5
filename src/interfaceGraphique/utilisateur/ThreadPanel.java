@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -65,7 +66,7 @@ public class ThreadPanel extends JPanel {
 		this.fd = fd;
 		
 		panel_2 = new JPanel();
-		panel_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
 		panel_2.setBorder(BorderFactory.createLineBorder(Color.red));
 		panel_2.setPreferredSize(new Dimension(0, 1500));
 		scrollPane_2 = new JScrollPane(panel_2);
