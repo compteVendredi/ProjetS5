@@ -148,7 +148,7 @@ public class ServiceThreadUtilisateur extends Thread {
 				String id_utilisateur = Communication.lireMsg(is);
 				Message msg = Communication.gson.fromJson(Communication.lireMsg(is), Message.class);
 				String id_groupe = Communication.lireMsg(is);
-				if(bdd.ajouterFil(id_utilisateur, msg.getDate(), msg.getMessage(), id_groupe) == null)
+				if(bdd.ajouterFil(id_utilisateur, msg.getDate(), msg.getMessage(), id_groupe) != 0)
 					return 1;
 				break;}
 			case Communication.demandeTousFils:{
