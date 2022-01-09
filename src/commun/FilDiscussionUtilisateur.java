@@ -36,5 +36,16 @@ public class FilDiscussionUtilisateur extends FilDiscussion {
 		this.nb_messageNonLu = nb_messageNonLu;
 	}
 	
+	/**
+	 * Récupère le premier message / titre / ticket du fil
+	 * @return titre
+	 */
+	public String toString() {
+		String titre = super.toString();
+		
+		if (nb_messageNonLu > 0)
+			return titre + " (" + nb_messageNonLu + ")";
+		return titre;
+	}
 	
 }
