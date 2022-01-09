@@ -180,7 +180,11 @@ public class BDD {
 				actualiseStatutRecu(id_fil);
 				resultSet = requeteLecture("SELECT premierMessage FROM FilDiscussion WHERE id_filDiscussion="+ id_fil);
 				resultSet.next();
-				String[] fil = {Integer.toString(id_fil), resultSet.getString("premierMessage"), Integer.toString(nbMessageNonLu(id_fil, id_utilisateur))};
+				String premierMessage = resultSet.getString("premierMessage");
+				resultSet = requeteLecture("SELECT id_groupe FROM FilDiscussion WHERE id_filDiscussion="+ id_fil);
+				resultSet.next();
+				String id_groupe = resultSet.getString("id_groupe");				
+				String[] fil = {Integer.toString(id_fil), premierMessage, Integer.toString(nbMessageNonLu(id_fil, id_utilisateur)), id_groupe};
 				list.add(fil);	
 			}
 			return list;

@@ -158,7 +158,7 @@ public class ServiceThreadUtilisateur extends Thread {
 				List<FilDiscussionUtilisateur> listeFils = new LinkedList<FilDiscussionUtilisateur>();
 				List<String[]> tousFils = bdd.getListFil(id_utilisateur);
 				for (String[] i : tousFils) {
-				    listeFils.add(new FilDiscussionUtilisateur(new Message(null, null, null, null, null, i[1]),Integer.parseInt(i[0]), "", Integer.parseInt(i[2])));
+				    listeFils.add(new FilDiscussionUtilisateur(new Message(null, null, null, null, null, i[1]),Integer.parseInt(i[0]), i[3], Integer.parseInt(i[2])));
 				}
 				Communication.envoyerMsg(os, Communication.gson.toJson(listeFils));
 				break;}
