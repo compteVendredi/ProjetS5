@@ -597,6 +597,7 @@ public class BDD {
 			return 1;
 		}	
 		requeteEcriture("INSERT INTO Appartenance VALUES ('"+id_groupe+"', '"+id_user+"')");
+		requeteEcriture("Update Groupe Set nb_utilisateur = nb_utilisateur + 1 Where id_groupe = '"+id_groupe+"'");
 		return requeteEcriture("Update FilDiscussion Set nb_utilisateur = nb_utilisateur + 1 Where id_groupe = '"+id_groupe+"'");
 	}	
 	
