@@ -13,8 +13,6 @@ import javax.swing.tree.TreeModel;
 import commun.FilDiscussionUtilisateur;
 
 public class ThreadTree extends JTree {
-	private DefaultMutableTreeNode mainRoot;
-	
 	public ThreadTree(DefaultMutableTreeNode mainRoot, TreeModel modele) {
 		super(modele);
 		
@@ -25,8 +23,11 @@ public class ThreadTree extends JTree {
 			for (ListIterator<FilDiscussionUtilisateur> iterateur = listeFils.listIterator(); iterateur.hasNext();) {
 					FilDiscussionUtilisateur newFil = iterateur.next();
 					DefaultMutableTreeNode newSujet = new DefaultMutableTreeNode(newFil);
-					if (listeGroupes.get(i) == newFil.getId_groupe())
+					System.out.println(newGroupe.getUserObject());
+					System.out.println(newFil.getId_groupe());
+					if ((String)newGroupe.getUserObject() == newFil.getId_groupe()) {
 						newGroupe.add(newSujet);
+					}
 			}
 			mainRoot.add(newGroupe);
 		}

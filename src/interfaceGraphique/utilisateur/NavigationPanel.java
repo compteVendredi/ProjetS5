@@ -39,7 +39,6 @@ public class NavigationPanel extends JPanel {
 	private DefaultMutableTreeNode mainRoot;
 	private DefaultTreeModel treeModele;
 	private DefaultMutableTreeNode node;
-	private FilDiscussion objet = null;
 	
 	public NavigationPanel(Container contentPane, JPanel baseThread) throws Exception {
 		this.contentPane = contentPane;
@@ -54,7 +53,7 @@ public class NavigationPanel extends JPanel {
 		
 		ActionListener taskPerformer = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-            	DefaultMutableTreeNode mainRoot = (DefaultMutableTreeNode) tree.getModel().getRoot();
+            	NavigationPanel.this.mainRoot = (DefaultMutableTreeNode) tree.getModel().getRoot();
             	int nbChild = tree.getModel().getChildCount(mainRoot);
             	for(int i = 0; i < nbChild; i++) {
             		DefaultMutableTreeNode groupe = (DefaultMutableTreeNode) tree.getModel().getChild(mainRoot, i);
@@ -63,23 +62,23 @@ public class NavigationPanel extends JPanel {
         			for (ListIterator<FilDiscussionUtilisateur> iterateur = listeFils.listIterator(); iterateur.hasNext();) {
         					FilDiscussionUtilisateur newFil = iterateur.next();
         					DefaultMutableTreeNode newSujet = new DefaultMutableTreeNode(newFil);
-        					groupe.add(newSujet);
+        					if (groupe.getUserObject() == newFil.getId_groupe())
+        						groupe.add(newSujet);
         			}
             	}
             	baseThread.removeAll();
             	contentPane.remove(baseThread);
-            	System.out.println(NavigationPanel.this.objet);
-            	DefaultMutableTreeNode nodeTemp = new DefaultMutableTreeNode(NavigationPanel.this.objet);
-            	
-            	NavigationPanel.this.baseThread = new ThreadPanel(NavigationPanel.this.objet, UserFrame.getCurrentUser());
-            	System.out.println("new panel");
+            
+            	DefaultMutableTreeNode nodeTemp = new DefaultMutableTreeNode(node);
+            	FilDiscussionUtilisateur test = (FilDiscussionUtilisateur) NavigationPanel.this.mainRoot.getUserObject();
+            	NavigationPanel.this.baseThread = new ThreadPanel(test.getId_filDiscussion(), UserFrame.getCurrentUser());
 				contentPane.add(NavigationPanel.this.baseThread, BorderLayout.CENTER);
 				contentPane.revalidate();
 				treeModele.reload();
             }
         };
         
-        timer = new Timer(30000,taskPerformer);
+        timer = new Timer(10000,taskPerformer);
         timer.setRepeats(true);
         timer.start();
 
@@ -107,11 +106,11 @@ public class NavigationPanel extends JPanel {
 						tree.setSelectionPath(selPath);
 						node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 						//Object obj = node.getUserObject();
-						NavigationPanel.this.objet = (FilDiscussion) node.getUserObject();
 						Class<FilDiscussion> c = FilDiscussion.class;
 						boolean b = c.isInstance(node.getUserObject());
 						if (b) {
-							JPanel sujetPanel = new ThreadPanel(NavigationPanel.this.objet, UserFrame.getCurrentUser());
+							FilDiscussion test = (FilDiscussion) node.getUserObject();
+							JPanel sujetPanel = new ThreadPanel(test.getId_filDiscussion(), UserFrame.getCurrentUser());
 							baseThread.removeAll();
 							contentPane.remove(baseThread);
 							contentPane.revalidate();
@@ -126,6 +125,7 @@ public class NavigationPanel extends JPanel {
 
 	private void btnAjouterFil(ActionEvent event) {
 		JPanel creationPanel = new ThreadCreationPanel(this);
+		baseThread.removeAll();
 		contentPane.remove(baseThread);
 		contentPane.revalidate();
 		contentPane.add(creationPanel, BorderLayout.CENTER);

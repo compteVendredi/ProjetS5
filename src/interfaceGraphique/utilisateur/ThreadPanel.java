@@ -34,12 +34,14 @@ public class ThreadPanel extends JPanel {
 	private FilDiscussion fd;
 	JScrollPane scrollPane_2;
 	private JPanel panel_2;
+	private int idFil;
 	
-	public ThreadPanel(FilDiscussion fd, ServiceUtilisateur currentUser) {
+	public ThreadPanel(int idFil, ServiceUtilisateur currentUser) {
 		this.setBackground(Color.DARK_GRAY);
 		this.setLayout(new BorderLayout(0, 0));
-		
+		this.idFil = idFil;
 		//panel d'envoi
+		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(Color.DARK_GRAY);
 		panel_1.setPreferredSize(new Dimension(100, 100));
@@ -110,8 +112,7 @@ public class ThreadPanel extends JPanel {
 		scrollPane_2 = new JScrollPane(panel_2);
 		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		this.add(scrollPane_2, BorderLayout.CENTER);
-		
-		List<Message> lm = UserFrame.getCurrentUser().getFilDiscussion(fd.getId_filDiscussion()).getMessages();
+		List<Message> lm = UserFrame.getCurrentUser().getFilDiscussion(this.idFil).getMessages();
 		for(ListIterator<Message> iterareur = lm.listIterator(); iterareur.hasNext();) {	
 			Message message = iterareur.next();
 
