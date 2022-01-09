@@ -351,6 +351,21 @@ public class BDD {
 		}
 	}	
 	
+	public List<String> getListUtilisateurGroupe(String id_groupe){
+		List<String> liste = new ArrayList<>();
+		ResultSet resultSet = null;
+		resultSet = requeteLecture("SELECT id_utilisateur FROM Appartenance where id_groupe='" + id_groupe + "'");
+		try {
+			while (resultSet.next()) {
+				liste.add(resultSet.getString("id_groupe"));	
+			}
+			return liste;
+		} catch (SQLException e) {
+			Communication.log("[ERREUR] sql exception : " + e.toString());
+			return null;
+		}
+	}
+	
 	/**
 	 * Ajoute un fil dans la BDD
 	 * @param id_utilisateur
