@@ -16,7 +16,7 @@ import utilitaire.Communication;
 
 public class ServiceThreadServeur extends Thread {
 
-	private ServerSocket listener;
+	private volatile ServerSocket listener;
 	private BDD bdd;
 	private volatile boolean estActif = true;
 	private List<ServiceThreadUtilisateur> utilisateurs = new LinkedList<ServiceThreadUtilisateur>();
@@ -41,9 +41,7 @@ public class ServiceThreadServeur extends Thread {
 		try {
 			Communication.log("Le serveur peut recevoir de nouveaux clients");
 			while (estActif) {
-				Socket socketOfServer = listener.accept();
-				if(!estActif)
-					break;				
+				Socket socketOfServer = listener.accept();			
 				Communication.log("Nouvelle connexion client n°" + clientNumber + " acceptée");
 				ServiceThreadUtilisateur nouveauUtilisateur = new ServiceThreadUtilisateur(socketOfServer,
 						clientNumber++, bdd);
