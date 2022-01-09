@@ -10,14 +10,20 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import serveur.BDD;
+
 public class PanelAddSuprr extends JPanel {
-	private String id;
+	protected String idUser;
+	protected String idGroup;
+	protected BDD accesGestion;
 	
-	public PanelAddSuprr(String id) {
-		this.id = id;
+	public PanelAddSuprr(String idAffiche, String idParent, BDD accesGestion) {
+		this.idGroup = idParent;
+		this.accesGestion = accesGestion;
+		this.idUser = idAffiche;
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
-		JLabel lblNewLabel_1 = new JLabel(id);
+		JLabel lblNewLabel_1 = new JLabel(idAffiche);
 		this.add(lblNewLabel_1);
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		this.add(horizontalStrut);
@@ -30,7 +36,7 @@ public class PanelAddSuprr extends JPanel {
 		this.add(horizontalStrut2);
 	}
 	
-	private void btnDelete(ActionEvent event) {
-		
+	protected void btnDelete(ActionEvent event) {
+		accesGestion.supprimerUserGroupe(idUser, idGroup);
 	}
 }

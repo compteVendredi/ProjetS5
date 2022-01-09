@@ -13,8 +13,11 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -36,6 +39,7 @@ public class UserPanel extends JPanel {
 	private BDD accesGestion;
 	private String id;
 	private Container contentPane;
+	private JOptionPane optionPane;
 	
 	public UserPanel(BDD accesGestion, String id, String password, String firstName, String name, Container contentPane) {
 		this.contentPane = contentPane;
@@ -130,16 +134,18 @@ public class UserPanel extends JPanel {
 		Component horizontalStrut10 = Box.createHorizontalStrut(20);
 		titreListe.add(horizontalStrut10);
 		JButton btnNewButton_2 = new JButton("ADD");
+		btnNewButton_2.addActionListener(this::btnAddListener);
 		titreListe.add(btnNewButton_2);
 		
 		panel_7.add(titreListe);
+		
 		JPanel listePane = new JPanel();
 		JScrollPane scrollPane = new JScrollPane(listePane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		listePane.setLayout(new BoxLayout(listePane, BoxLayout.Y_AXIS));
 		List<String> listeGroupes = accesGestion.getListGroupeUtilisateur(id);
 		for (ListIterator<String> iterateur = listeGroupes.listIterator(); iterateur.hasNext();) {
 			String idGroupe = iterateur.next();
-			JPanel newPanel = new PanelAddSuprr(idGroupe);
+			JPanel newPanel = new AddSupprUser(id, idGroupe, accesGestion);
 			listePane.add(newPanel);
 		}
 		panel_7.add(scrollPane, BorderLayout.CENTER);
@@ -160,6 +166,31 @@ public class UserPanel extends JPanel {
 		
 		Component horizontalStrut_1 = Box.createHorizontalStrut(150);
 		this.add(horizontalStrut_1, BorderLayout.EAST);
+		
+	}
+	
+	private void btnAddListener(ActionEvent event) {
+		List<String> listeGroupe = accesGestion.getListGroupe();
+		Object[] possibilities = new Object[listeGroupe.size()];
+		int nb = 0;
+		for(ListIterator<String> iterateur = listeGroupe.listIterator(); iterateur.hasNext() && nb < listeGroupe.size();) {
+			String nomGroupe = iterateur.next();
+			possibilities[nb] = (String) nomGroupe; 
+			nb++;
+		}
+		
+		String s = (String)JOptionPane.showInputDialog(
+							this,
+		                    "Choissisez un groupe à ajouter\n",
+		                    "Ajout d'un groupe",
+		                    JOptionPane.PLAIN_MESSAGE,
+		                    null, possibilities,
+		                    possibilities[0]);
+
+		//If a string was returned, say so.
+		if ((s != null) && (s.length() > 0)) {
+			accesGestion.insertGroupe(id, s);
+		}
 		
 	}
 	

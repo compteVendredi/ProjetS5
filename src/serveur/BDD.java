@@ -452,9 +452,15 @@ public class BDD {
 		}	
 		requeteEcriture("INSERT INTO Appartenance VALUES ('"+id_groupe+"', '"+id_user+"')");
 		return requeteEcriture("Update FilDiscussion Set nb_utilisateur = nb_utilisateur + 1 Where id_groupe = '"+id_groupe+"'");
-	}	
+	}
 	
-	public int updateUtilisateurMDP(String id_utilisateur,String mdp) {
+	
+	public int supprimerUserGroupe(String id_user, String id_groupe) {
+		requeteEcriture("Update Groupe Set nb_utilisateur = nb_utilisateur - 1 Where id_groupe ='" + id_groupe +"'");
+		return requeteEcriture("DELETE FROM Appartenance WHERE id_utilisateur='"+id_user+"'" + "AND id_groupe='"+id_groupe +"'");
+	}
+	
+	public int updateUtilisateurMDP(String id_utilisateur, String mdp) {
 		return requeteEcriture("Update Utilisateur Set motDePasse = '"+mdp+"' Where id_utilisateur = '"+id_utilisateur+"'");
 	}
 	
@@ -465,5 +471,4 @@ public class BDD {
 	public int updateUtilisateurPrenom(String id_utilisateur,String prenom) {
 		return requeteEcriture("Update Utilisateur Set prenom = '"+prenom+"' Where id_utilisateur = '"+id_utilisateur+"'");
 	}
-	
 }
