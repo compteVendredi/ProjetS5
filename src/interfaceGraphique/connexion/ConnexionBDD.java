@@ -41,7 +41,7 @@ public class ConnexionBDD extends Connexion {
 	protected JPanel initTextAreaPanel() {
 		JPanel textAreaPanel = new JPanel();
 		textAreaPanel = super.initTextAreaPanel();
-		urlBDD = new JTextField("jdbc:mysql://localhost:3306/univmessage");
+		urlBDD = new JTextField("jdbc:mysql://localhost:3306/s5");
 		textAreaPanel.add(urlBDD);
 		Component verticalStrut_6 = Box.createVerticalStrut(20);
 		textAreaPanel.add(verticalStrut_6);
