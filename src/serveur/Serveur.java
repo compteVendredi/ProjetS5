@@ -16,7 +16,7 @@ public class Serveur {
 	private BDD bdd;
 	private int port;
 	private ServiceThreadServeur serviceServeur = null;
-	private ServerSocket listener = null;
+	private volatile ServerSocket listener = null;
 
 	/**
 	 * Créer un Serveur

@@ -41,7 +41,7 @@ public class ServiceThreadServeur extends Thread {
 		try {
 			Communication.log("Le serveur peut recevoir de nouveaux clients");
 			while (estActif) {
-				Socket socketOfServer = listener.accept();			
+				Socket socketOfServer = listener.accept();
 				Communication.log("Nouvelle connexion client n°" + clientNumber + " acceptée");
 				ServiceThreadUtilisateur nouveauUtilisateur = new ServiceThreadUtilisateur(socketOfServer,
 						clientNumber++, bdd);
@@ -61,9 +61,9 @@ public class ServiceThreadServeur extends Thread {
 	public void arreter() {
 		Communication.log("Début de l'arrêt du service thread serveur");
 		estActif = false;
-		ServiceThreadUtilisateur i = null;
-		for (Iterator<ServiceThreadUtilisateur> iterateur = utilisateurs.iterator(); iterateur
-				.hasNext(); i = iterateur.next()) {
+		Iterator<ServiceThreadUtilisateur> iterateur = utilisateurs.iterator();
+		while (iterateur.hasNext()) {
+			ServiceThreadUtilisateur i = iterateur.next();
 			if (i != null) {
 				i.arreter();
 				try {

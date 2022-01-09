@@ -24,9 +24,10 @@ public class ServiceThreadUtilisateur extends Thread {
 
 	private int numeroClient;
 	private BDD bdd;
-	private boolean estActif = true;
-	BufferedReader is;
-	BufferedWriter os;
+	private volatile boolean estActif = true;
+	private volatile BufferedReader is;
+	private volatile BufferedWriter os;
+	private volatile Socket socketUtilisateur;
 	
 	/**
 	 * Redéfinition locale d'une méthode de log
@@ -46,9 +47,10 @@ public class ServiceThreadUtilisateur extends Thread {
 	public ServiceThreadUtilisateur(Socket socketUtilisateur, int numeroClient, BDD bdd) {
 		this.numeroClient = numeroClient;
 		this.bdd = bdd;
+		this.socketUtilisateur = socketUtilisateur;
 		try {
-			is = new BufferedReader(new InputStreamReader(socketUtilisateur.getInputStream()));
-			os = new BufferedWriter(new OutputStreamWriter(socketUtilisateur.getOutputStream()));
+			is = new BufferedReader(new InputStreamReader(this.socketUtilisateur.getInputStream()));
+			os = new BufferedWriter(new OutputStreamWriter(this.socketUtilisateur.getOutputStream()));
 		}
 		catch(Exception e) {
 			log("Impossible d'établir un flux sur le socket utilisateur : " + e.toString());
@@ -115,7 +117,7 @@ public class ServiceThreadUtilisateur extends Thread {
 					line = is.readLine();
 				} catch (IOException e) {
 					log("[ERREUR] IO sur la lecture du flux : " + e.toString());
-				}			
+				}
 				if (line.equals("QUIT")) {
 					Communication.log("QUIT reçu");
 					estActif = false;
@@ -188,6 +190,7 @@ public class ServiceThreadUtilisateur extends Thread {
 	
 	public void arreter() {
 		try {
+			socketUtilisateur.close();
 			if(is != null)
 				is.close();
 			if(os != null)
