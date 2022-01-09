@@ -136,11 +136,12 @@ public class ThreadPanel extends JPanel {
 			panel_5.add(lblNewLabel, BorderLayout.NORTH);
 		}
 	}
+	
 	private Color selectionnerCouleur(String couleur) {
 		switch(couleur) {
 		case "Rouge": return Color.RED;
 		case "Vert": return Color.GREEN;
-		case "Jaune": return Color.YELLOW;
+		case "Orange": return Color.ORANGE;
 		default: return Color.GRAY;
 		}
 	}
@@ -171,6 +172,6 @@ public class ThreadPanel extends JPanel {
 	
 		JLabel lblNewLabel = new JLabel("Par " + message.getPrenom() + " " + message.getNom() + " le " + message.getDate());
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_5.add(lblNewLabel, BorderLayout.NORTH);	
+		panel_5.add(lblNewLabel, BorderLayout.NORTH);
 	}
 }
