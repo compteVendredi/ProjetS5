@@ -87,53 +87,5 @@ public class Serveur {
 		Communication.log("Fin de l'arrêt du serveur (succès)");
 		return 0;
 	}
-	
-	
-	public Set<FilDiscussion> getFildiscussion() {
-		return null;
-	}
-	public List<String> getGroupes() {
-		return bdd.getListGroupe();
-	}
-	public Set<ServiceUtilisateur> getUtilisateurs() {
-		return null;
-	}
-
-	public int ajouterFilDiscussion(FilDiscussion filDiscussion) {
-		return 1;
-	}
-
-	public int ajouterUtilisateur(ServiceUtilisateur utilisateur) {
-		return 1;
-	}
-
-	public int supprimerUtilisateur(ServiceUtilisateur utilisateur) {
-		return 1;
-	}
-
-	public int insererDansGroupe(ServiceUtilisateur utilisateur) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public int supprimerDansGroupe(ServiceUtilisateur utilisateur) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public int supprimerFilDiscussion(FilDiscussion filDiscussion) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public int ajotuerMessage(Message message, FilDiscussion filDiscussion) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	public int supprimerMessage(Message message, FilDiscussion filDiscuss) {
-		// TODO implement this operation
-		throw new UnsupportedOperationException("not implemented");
-	}
 
 }
