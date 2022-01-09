@@ -452,7 +452,7 @@ public class BDD {
 	 * @return 0 si succès 1 sinon
 	 */
 	public int ajouterUtilisateur(String id_user, String hashMDP, String Nom, String prenom) {
-		return requeteEcriture("INSERT INTO utilisateur VALUES ('"+id_user+"', '"+hashMDP+"', '"+Nom+"', '"+prenom+"')");
+		return requeteEcriture("INSERT INTO Utilisateur VALUES ('"+id_user+"', '"+hashMDP+"', '"+Nom+"', '"+prenom+"')");
 	}
 	
 	/**
