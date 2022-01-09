@@ -31,7 +31,6 @@ public class ThreadPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 8327177803774656189L;
 	private JTextArea messageTextArea;
-	private FilDiscussion fd;
 	JScrollPane scrollPane_2;
 	private JPanel panel_2;
 	private int idFil;
@@ -65,7 +64,6 @@ public class ThreadPanel extends JPanel {
 			scrollPane.setViewportView(messageTextArea);
 		
 		//panel affichant les sujets
-		this.fd = fd;
 		
 		panel_2 = new JPanel();
 		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
@@ -75,7 +73,7 @@ public class ThreadPanel extends JPanel {
 		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		this.add(scrollPane_2, BorderLayout.CENTER);
 	
-		List<Message> lm = currentUser.getFilDiscussion(fd.getId_filDiscussion()).getMessages();
+		List<Message> lm = currentUser.getFilDiscussion(currentUser.getFilDiscussion(idFil).getId_filDiscussion()).getMessages();
 		for(ListIterator<Message> iterareur = lm.listIterator(); iterareur.hasNext();) {	
 			Message message = iterareur.next();
 
@@ -152,7 +150,7 @@ public class ThreadPanel extends JPanel {
 		Message message;
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		message = new Message(UserFrame.getCurrentUser().getIdentifiant(), UserFrame.getCurrentUser().getNom(), UserFrame.getCurrentUser().getPrenom(), dtf.format(LocalDateTime.now()), "Rouge", messageTextArea.getText());
-		UserFrame.getCurrentUser().envoyerMessage(message, fd);
+		UserFrame.getCurrentUser().envoyerMessage(message, UserFrame.getCurrentUser().getFilDiscussion(idFil));
 		
 		//creation panelmessage en faire une classe
 		JPanel panel_5 = new JPanel();

@@ -7,8 +7,11 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -21,10 +24,9 @@ public class ThreadCreationPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 7823564978930425086L;
-	private JTextField groupeTextField;
 	private JTextArea messageTextArea;
 	private NavigationPanel navigationPanel;
-	
+	private JComboBox<String> cb;
 	public ThreadCreationPanel(NavigationPanel navigationPanel) {
 		this.navigationPanel = navigationPanel;
 		this.setLayout(new BorderLayout(0, 0));
@@ -40,11 +42,22 @@ public class ThreadCreationPanel extends JPanel {
 		JPanel panelInterGroupe = new JPanel();
 		panelInterGroupe.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
 		panelInterGroupe.setPreferredSize(new Dimension(0, 100));
+		
 		JLabel groupeLabel = new JLabel("Groupe:", JLabel.LEFT);
-		groupeTextField = new JTextField();
-		groupeTextField.setColumns(10);
 		panelInterGroupe.add(groupeLabel);
-		panelInterGroupe.add(groupeTextField);
+		List<String> listeGroupes = UserFrame.getCurrentUser().getGroupesUtilisateur();
+		
+		String comboBoxItems[] = new String[listeGroupes.size()];
+		int nb = 0;
+		for(ListIterator<String> iterateur = listeGroupes.listIterator(); iterateur.hasNext();) {
+			String newString = iterateur.next();
+			comboBoxItems[nb] = newString;
+			nb++;
+		}
+		cb = new JComboBox<>(comboBoxItems);
+		cb.setEditable(false);
+		panelInterGroupe.add(cb);
+		
 		panelInter.add(panelInterGroupe, BorderLayout.NORTH);
 		
 		JLabel messageLabel = new JLabel("Message:", JLabel.LEFT);
@@ -69,7 +82,7 @@ public class ThreadCreationPanel extends JPanel {
 	private void btnCreerFil(ActionEvent event) {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		Message message = new Message(UserFrame.getCurrentUser().getIdentifiant(), UserFrame.getCurrentUser().getNom(), UserFrame.getCurrentUser().getPrenom(), dtf.format(LocalDateTime.now()), "Rouge", messageTextArea.getText());
-		UserFrame.getCurrentUser().ajouterFilDiscussion(message, groupeTextField.getText());
+		UserFrame.getCurrentUser().ajouterFilDiscussion(message, (String) cb.getSelectedItem());
 		navigationPanel.actualiserTree();
 	}
 }

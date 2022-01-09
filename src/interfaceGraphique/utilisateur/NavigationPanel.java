@@ -110,13 +110,14 @@ public class NavigationPanel extends JPanel {
 						Class<FilDiscussion> c = FilDiscussion.class;
 						boolean b = c.isInstance(node.getUserObject());
 						if (b) {
-							FilDiscussion test = (FilDiscussion) node.getUserObject();
-							NavigationPanel.this.idFil = test.getId_filDiscussion();
-							JPanel sujetPanel = new ThreadPanel(idFil, UserFrame.getCurrentUser());
+							FilDiscussion fd = (FilDiscussion) node.getUserObject();
+							NavigationPanel.this.idFil = fd.getId_filDiscussion();
+							JPanel sujetPanel = new ThreadPanel(NavigationPanel.this.idFil, UserFrame.getCurrentUser());
 							baseThread.removeAll();
 							contentPane.remove(baseThread);
-							contentPane.revalidate();
 							contentPane.add(sujetPanel, BorderLayout.CENTER);
+							contentPane.revalidate();
+				
 							baseThread = sujetPanel;
 						}
 					}
