@@ -143,7 +143,7 @@ public class ServiceUtilisateur extends Utilisateur {
 	
 	
 	/**
-	 * Récupère tous les fils de discussion
+	 * Récupère seulement les titres + nombres de messsages non-lu (selon l'utilisateur) de tous les fils de discussion
 	 * @return tous les fils de discussion ou null en cas d'échec
 	 */
 	public List<FilDiscussionUtilisateur> getAllFilDiscussion() {
