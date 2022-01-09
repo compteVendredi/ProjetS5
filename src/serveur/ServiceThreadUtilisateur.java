@@ -188,8 +188,10 @@ public class ServiceThreadUtilisateur extends Thread {
 	
 	public void arreter() {
 		try {
-			is.close();
-			os.close();
+			if(is != null)
+				is.close();
+			if(os != null)
+				os.close();
 		} catch (Exception e) {
 			log("[ERREUR] Impossible de fermer les flux du service utilisateur : " + e.toString());
 		}
