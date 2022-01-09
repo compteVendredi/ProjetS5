@@ -48,7 +48,7 @@ public class Communication {
 			os.newLine();
 			os.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log("[ERREUR] Écriture flux " + e.toString());
 			return 1;
 		}
 		return 0;
@@ -66,7 +66,7 @@ public class Communication {
 		try {
 			responseLine = is.readLine();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log("[ERREUR] Lecture flux " + e.toString());
 			return null;
 		}
 		return responseLine;
