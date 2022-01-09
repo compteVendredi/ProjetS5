@@ -457,7 +457,7 @@ public class BDD {
 	 * @return 0 si succès 1 sinon
 	 */
 	public int ajouterGroupe(String role){
-		return requeteEcriture("INSERT INTO Lu VALUES ('"+role+"',0)");
+		return requeteEcriture("INSERT INTO Groupe VALUES ('"+role+"',0)");
 	}
 	
 	/**
