@@ -376,7 +376,6 @@ public class BDD {
 	 */
 	public int ajouterFil(String id_utilisateur, String date, String message, String id_groupe) {
 		ResultSet resultSet = null;
-		int num;
 		int nb_utilisateur;
 		int estDansGroupe;
 		// Check si l'utilisateur est dans le groupe
@@ -392,21 +391,22 @@ public class BDD {
 				nb_utilisateur++;
 			}
 			// Insert fil + message
-			num = requeteEcritureReturn("INSERT INTO FilDiscussion VALUES (NULL, '" + id_groupe + "', '" + message + "',"+ nb_utilisateur +", 1)"); 
-			requeteEcriture("INSERT INTO Message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"+ id_utilisateur + "'," + num + ")");
+			int num_fil = requeteEcritureReturn("INSERT INTO FilDiscussion VALUES (NULL, '" + id_groupe + "', '" + message + "',"+ nb_utilisateur +", 1)"); 
+			int num_message = requeteEcritureReturn("INSERT INTO Message VALUES (NULL, '" + date + "', 'Rouge' ,'" + message + "','"+ id_utilisateur + "'," + num_fil + ")");
+			requeteEcriture("INSERT INTO Lu VALUES ("+ num_message + ",'"+ id_utilisateur +"')");
 			// Ajoute les utilisateurs dans apparenance 
 			resultSet = requeteLecture("SELECT id_utilisateur FROM Appartenance WHERE id_groupe = '"+ id_groupe +"'");
 			while(resultSet.next()) {
 				liste.add(resultSet.getString("id_utilisateur"));
 			}
 			for (String id_user : liste) {
-				this.ajouterEstDans(id_user, num);
+				this.ajouterEstDans(id_user, num_fil);
 			}
 			if (estDansGroupe == 0) {
-				this.ajouterEstDans(id_utilisateur, num);
+				this.ajouterEstDans(id_utilisateur, num_fil);
 			}
-			// Insert lu pour l'utilisateur 
-			return requeteEcriture("INSERT INTO Recu VALUES ("+ num + ",'"+ id_utilisateur +"')");
+			// Insert recu pour l'utilisateur 
+			return requeteEcriture("INSERT INTO Recu VALUES ("+ num_fil + ",'"+ id_utilisateur +"')");
 		} catch (SQLException e) {
 			Communication.log("[ERREUR] sql exception : " + e.toString());
 			return 1;
