@@ -32,8 +32,9 @@ public class ThreadPanel extends JPanel {
 	private JTextArea messageTextArea;
 	private FilDiscussion fd;
 	JScrollPane scrollPane_2;
+	private JPanel panel_2;
 	
-	public ThreadPanel(DefaultMutableTreeNode node, ServiceUtilisateur currentUser) {
+	public ThreadPanel(FilDiscussion fd, ServiceUtilisateur currentUser) {
 		this.setBackground(Color.DARK_GRAY);
 		this.setLayout(new BorderLayout(0, 0));
 		
@@ -61,9 +62,9 @@ public class ThreadPanel extends JPanel {
 			scrollPane.setViewportView(messageTextArea);
 		
 		//panel affichant les sujets
-		fd = (FilDiscussion)node.getUserObject();
+		this.fd = fd;
 		
-		JPanel panel_2 = new JPanel();
+		panel_2 = new JPanel();
 		panel_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		panel_2.setBorder(BorderFactory.createLineBorder(Color.red));
 		panel_2.setPreferredSize(new Dimension(0, 1500));
@@ -149,5 +150,27 @@ public class ThreadPanel extends JPanel {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		message = new Message(UserFrame.getCurrentUser().getIdentifiant(), UserFrame.getCurrentUser().getNom(), UserFrame.getCurrentUser().getPrenom(), dtf.format(LocalDateTime.now()), "Rouge", messageTextArea.getText());
 		UserFrame.getCurrentUser().envoyerMessage(message, fd);
+		
+		//creation panelmessage en faire une classe
+		JPanel panel_5 = new JPanel();
+		panel_5.setBackground(Color.DARK_GRAY);
+		panel_5.setPreferredSize(new Dimension(460, 140));
+		panel_2.add(panel_5);
+		panel_5.setLayout(new BorderLayout(0, 0));
+	
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		panel_5.add(scrollPane_1, BorderLayout.CENTER);
+	
+		JTextArea txtrLoremIpsumDolor = new JTextArea();
+		txtrLoremIpsumDolor.setBackground(selectionnerCouleur(""));
+		txtrLoremIpsumDolor.setLineWrap(true);
+		txtrLoremIpsumDolor.setText(message.getMessage());
+		txtrLoremIpsumDolor.setEditable(false);
+		scrollPane_1.setViewportView(txtrLoremIpsumDolor);
+	
+		JLabel lblNewLabel = new JLabel("Par " + message.getPrenom() + " " + message.getNom() + " le " + message.getDate());
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_5.add(lblNewLabel, BorderLayout.NORTH);	
 	}
 }

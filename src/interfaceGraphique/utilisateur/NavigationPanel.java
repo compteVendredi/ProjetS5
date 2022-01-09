@@ -21,6 +21,7 @@ import javax.swing.tree.TreePath;
 
 import commun.FilDiscussion;
 import commun.FilDiscussionUtilisateur;
+import utilisateur.ServiceUtilisateur;
 
 import java.lang.Thread;
 import java.util.List;
@@ -37,6 +38,8 @@ public class NavigationPanel extends JPanel {
 	JScrollPane scrollPane_2;
 	private DefaultMutableTreeNode mainRoot;
 	private DefaultTreeModel treeModele;
+	private DefaultMutableTreeNode node;
+	private FilDiscussion objet = null;
 	
 	public NavigationPanel(Container contentPane, JPanel baseThread) throws Exception {
 		this.contentPane = contentPane;
@@ -63,11 +66,20 @@ public class NavigationPanel extends JPanel {
         					groupe.add(newSujet);
         			}
             	}
-            	treeModele.reload();
+            	baseThread.removeAll();
+            	contentPane.remove(baseThread);
+            	System.out.println(NavigationPanel.this.objet);
+            	DefaultMutableTreeNode nodeTemp = new DefaultMutableTreeNode(NavigationPanel.this.objet);
+            	
+            	NavigationPanel.this.baseThread = new ThreadPanel(NavigationPanel.this.objet, UserFrame.getCurrentUser());
+            	System.out.println("new panel");
+				contentPane.add(NavigationPanel.this.baseThread, BorderLayout.CENTER);
+				contentPane.revalidate();
+				treeModele.reload();
             }
         };
         
-        timer = new Timer(5000,taskPerformer);
+        timer = new Timer(30000,taskPerformer);
         timer.setRepeats(true);
         timer.start();
 
@@ -93,12 +105,14 @@ public class NavigationPanel extends JPanel {
 					if (selRow != -1) {
 						tree.clearSelection();
 						tree.setSelectionPath(selPath);
-						DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+						node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 						//Object obj = node.getUserObject();
+						NavigationPanel.this.objet = (FilDiscussion) node.getUserObject();
 						Class<FilDiscussion> c = FilDiscussion.class;
 						boolean b = c.isInstance(node.getUserObject());
 						if (b) {
-							JPanel sujetPanel = new ThreadPanel(node, UserFrame.getCurrentUser());
+							JPanel sujetPanel = new ThreadPanel(NavigationPanel.this.objet, UserFrame.getCurrentUser());
+							baseThread.removeAll();
 							contentPane.remove(baseThread);
 							contentPane.revalidate();
 							contentPane.add(sujetPanel, BorderLayout.CENTER);
@@ -116,5 +130,6 @@ public class NavigationPanel extends JPanel {
 		contentPane.revalidate();
 		contentPane.add(creationPanel, BorderLayout.CENTER);
 		baseThread = creationPanel;
+		
 	}
 }
