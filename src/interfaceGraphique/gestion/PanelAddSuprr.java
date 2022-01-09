@@ -37,6 +37,6 @@ public class PanelAddSuprr extends JPanel {
 	}
 	
 	protected void btnDelete(ActionEvent event) {
-		accesGestion.supprimerUserGroupe(idUser, idGroup);
+		accesGestion.supprimerUtilisateurGroupe(idGroup, idUser);
 	}
 }

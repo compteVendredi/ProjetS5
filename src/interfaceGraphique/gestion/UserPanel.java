@@ -202,7 +202,7 @@ public class UserPanel extends JPanel {
 	
 	private void btnDeleteUserListener(ActionEvent event) {
 		this.removeAll();
-		accesGestion.supprimerUser(id);
+		accesGestion.supprimerUtilisateur(id);
 		this.add(new JPanel(), BorderLayout.CENTER);
 		contentPane.revalidate();
 	}

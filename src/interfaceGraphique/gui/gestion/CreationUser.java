@@ -106,7 +106,7 @@ public class CreationUser extends JPanel {
 				userName = nameField.getText();
 				userFirstName = firstNameField.getText();
 				password = HashUtil.applySha256(passwordField.getText());
-				CreationUser.this.accesGestion.ajouterUser(idUser , password, userName, userFirstName);
+				CreationUser.this.accesGestion.ajouterUtilisateur(idUser , password, userName, userFirstName);
 				CreationUser.this.removeAll();
 				JPanel newPanel = new JPanel();
 				CreationUser.this.add(newPanel);

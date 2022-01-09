@@ -10,6 +10,6 @@ public class AddSupprUser extends PanelAddSuprr {
 	}
 	
 	protected void btnDelete(ActionEvent event) {
-		accesGestion.supprimerUserGroupe(idGroup, idUser);
+		accesGestion.supprimerUtilisateurGroupe(idGroup, idUser);
 	}
 }
