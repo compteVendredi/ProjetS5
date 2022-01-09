@@ -116,6 +116,8 @@ public class ServiceThreadUtilisateur extends Thread {
 				} catch (IOException e) {
 					log("[ERREUR] IO sur la lecture du flux : " + e.toString());
 				}
+				if(!estActif)
+					break;				
 				if (line.equals("QUIT")) {
 					Communication.log("QUIT reçu");
 					estActif = false;
