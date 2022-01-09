@@ -42,6 +42,8 @@ public class ServiceThreadServeur extends Thread {
 			Communication.log("Le serveur peut recevoir de nouveaux clients");
 			while (estActif) {
 				Socket socketOfServer = listener.accept();
+				if(!estActif)
+					break;				
 				Communication.log("Nouvelle connexion client n°" + clientNumber + " acceptée");
 				ServiceThreadUtilisateur nouveauUtilisateur = new ServiceThreadUtilisateur(socketOfServer,
 						clientNumber++, bdd);
